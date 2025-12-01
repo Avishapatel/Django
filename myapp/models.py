@@ -28,6 +28,12 @@ class Size(models.Model):
     def __str__(self):
         return self.size_name
     
+class Price_range(models.Model):
+    min_price=models.IntegerField()
+    max_price=models.IntegerField()
+    def __str__(self):
+        return self.min_price.__str__() + " Rs. - " + self.max_price.__str__() + " Rs."
+    
 class Product(models.Model):
     product_name=models.CharField(max_length=200)
     product_price=models.IntegerField()
