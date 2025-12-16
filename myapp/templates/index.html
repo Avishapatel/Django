@@ -104,6 +104,9 @@
                         {% for i in c_id %}
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link" data-toggle="dropdown">{{ i.cat_name }} <i class="fa fa-angle-down float-right mt-1"></i></a>
+                            
+                            
+                            
                             <div class="dropdown-menu position-absolute bg-secondary border-0 rounded-0 w-100 m-0">
                                 {% for sub in i.sub_category_set.all %}
                                     <a href="{% url 'shop' %}?s_id={{ sub.id }}" class="dropdown-item">{{ sub.sbcat_name }}</a>
@@ -141,46 +144,74 @@
                             <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0">
-                            <a href="" class="nav-item nav-link">Login</a>
-                            <a href="" class="nav-item nav-link">Register</a>
+                            {% if request.session.user_name %}
+                                <span class="nav-link">Hi, {{ request.session.user_name }}</span>
+                                <a href="{% url 'logout' %}" class="nav-item nav-link">Logout</a>  <!-- <-- use logout URL -->
+                            {% else %}
+                                <a href="{% url 'login' %}" class="nav-item nav-link">Login</a>
+                                <a href="{% url 'register' %}" class="nav-item nav-link">Register</a>
+                            {% endif %}
                         </div>
                     </div>
                 </nav>
-
-                <div id="header-carousel" class="carousel slide" data-ride="carousel">
-                    <div class="carousel-inner">
-                        <div class="carousel-item active" style="height: 500px;">
-                            <img class="img-fluid" src="static/img/carousel-1.jpg" alt="Image">
-                            <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
-                                <div class="p-3" style="max-width: 700px;">
-                                    <h4 class="text-light text-uppercase font-weight-medium mb-3">10% Off Your First Order</h4>
-                                    <h3 class="display-4 text-white font-weight-semi-bold mb-4">Fashionable Dress</h3>
-                                    <a href="" class="btn btn-light py-2 px-3">Shop Now</a>
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+        {% if 'logout' in message.tags %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <script>
+                setTimeout(function() {
+                    $('.alert').fadeOut('slow', function() { $(this).remove(); });
+                }, 3000);  <!-- auto-dismiss after 3 seconds -->
+            </script>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
+  
+                   <div id="header-carousel" class="carousel slide" data-ride="carousel">
+                       <ol class="carousel-indicators">
+                           <li data-target="#header-carousel" data-slide-to="0" class="active"></li>
+                           <li data-target="#header-carousel" data-slide-to="1"></li>
+                       </ol>
+                       <div class="carousel-inner">
+                            <div class="carousel-item active" style="height: 470px;">
+                                <img class="img-fluid" src="static/img/carousel-1.jpg" alt="Image">
+                                <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                                    <div class="p-3" style="max-width: 700px;">
+                                        <h4 class="text-light text-uppercase font-weight-medium mb-3">10% Off Your First Order</h4>
+                                        <h3 class="display-4 text-white font-weight-semi-bold mb-4">Fashionable Dress</h3>
+                                        <a href="" class="btn btn-light py-2 px-3">Shop Now</a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="carousel-item" style="height: 500px;">
-                            <img class="img-fluid" src="static/img/carousel-2.jpg" alt="Image">
-                            <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
-                                <div class="p-3" style="max-width: 700px;">
-                                    <h4 class="text-light text-uppercase font-weight-medium mb-3">10% Off Your First Order</h4>
-                                    <h3 class="display-4 text-white font-weight-semi-bold mb-4">Reasonable Price</h3>
-                                    <a href="" class="btn btn-light py-2 px-3">Shop Now</a>
+                            <div class="carousel-item" style="height: 470px;">
+                                <img class="img-fluid" src="static/img/carousel-2.jpg" alt="Image">
+                                <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                                    <div class="p-3" style="max-width: 700px;">
+                                        <h4 class="text-light text-uppercase font-weight-medium mb-3">10% Off Your First Order</h4>
+                                        <h3 class="display-4 text-white font-weight-semi-bold mb-4">Reasonable Price</h3>
+                                        <a href="" class="btn btn-light py-2 px-3">Shop Now</a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <a class="carousel-control-prev" href="#header-carousel" data-slide="prev">
-                        <div class="btn btn-dark" style="width: 45px; height: 45px;">
-                            <span class="carousel-control-prev-icon mb-n2"></span>
-                        </div>
-                    </a>
-                    <a class="carousel-control-next" href="#header-carousel" data-slide="next">
-                        <div class="btn btn-dark" style="width: 45px; height: 45px;">
-                            <span class="carousel-control-next-icon mb-n2"></span>
-                        </div>
-                    </a>
-                </div>
+                       </div>
+                       <a class="carousel-control-prev" href="#header-carousel" role="button" data-slide="prev">
+                            <div class="btn btn-dark" style="width: 45px; height: 45px;">
+                                <span class="carousel-control-prev-icon mb-n2"></span>
+                            </div>
+                        </a>
+                       <a class="carousel-control-next" href="#header-carousel" role="button" data-slide="next">
+                            <div class="btn btn-dark" style="width: 45px; height: 45px;">
+                                <span class="carousel-control-next-icon mb-n2"></span>
+                            </div>
+                        </a>
+                   </div>
             </div>
         </div>
     </div>
@@ -189,8 +220,8 @@
 
 
     <!-- Featured Start -->
-    <div class="container-fluid pt-5">
-        <div class="row px-xl-5 pb-3">
+    <div class="container-fluid">
+        <div class="row px-xl-5">
             <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                 <div class="d-flex align-items-center border mb-4" style="padding: 30px;">
                     <h1 class="fa fa-check text-primary m-0 mr-3"></h1>
@@ -226,11 +257,13 @@
             {% for i in c_id %}
             <div class="col-lg-4 col-md-6 pb-1">
                 <div class="cat-item d-flex flex-column border mb-4" style="padding: 30px;">
-                    <p class="text-right">{{i.product_count}} products</p>
+                    <p class="text-right">{{ i.product_count }} products</p>
                     <a href="" class="cat-img position-relative overflow-hidden mb-3">
-                        <img class="img-fluid" src="static/img/cat-1.jpg" alt="">
+                        
+                            <img class="img-fluid" src="{{ i.random_product.product_img.url }}" alt="{{ i.random_product.product_name }}">
+                        
                     </a>
-                    <h5 class="font-weight-semi-bold m-0">{{i.cat_name}}</h5>
+                    <h5 class="font-weight-semi-bold m-0">{{ i.cat_name }}</h5>
                 </div>
             </div>
            {% endfor %}

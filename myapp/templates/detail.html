@@ -1,3 +1,6 @@
+{% extends 'index.html' %}
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -89,17 +92,19 @@
         </div>
     </div>
     <!-- Topbar End -->
-
+{% block content %}
 
     <!-- Navbar Start -->
-    <div class="container-fluid">
+    <div class="container-fluid mb-4">
         <div class="row border-top px-xl-5">
             <div class="col-lg-3 d-none d-lg-block">
                 <a class="btn shadow-none d-flex align-items-center justify-content-between bg-primary text-white w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; margin-top: -1px; padding: 0 30px;">
                     <h6 class="m-0">Categories</h6>
                     <i class="fa fa-angle-down text-dark"></i>
                 </a>
-                <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0 bg-light" id="navbar-vertical" style="width: calc(100% - 30px); z-index: 1;">
+                <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 border bg-white shadow" id="navbar-vertical" style="width: calc(100% - 30px); z-index: 9999; height: 530px; overflow-y: auto;">
+
+                <!-- <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0 bg-light" id="navbar-vertical" style="width: calc(100% - 30px); z-index: 1;"> -->
                     <div class="navbar-nav w-100 overflow-hidden" style="height: 530px">
                         {% for i in c_id %}
                         <div class="nav-item dropdown">
@@ -139,12 +144,37 @@
                             </div>
                             <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>
                         </div>
-                        <div class="navbar-nav ml-auto py-0">
-                            <a href="" class="nav-item nav-link">Login</a>
-                            <a href="" class="nav-item nav-link">Register</a>
+                       <div class="navbar-nav ml-auto py-0">
+                            {% if request.session.user_name %}
+                                <span class="nav-link">Hi, {{ request.session.user_name }}</span>
+                                <a href="{% url 'logout' %}" class="nav-item nav-link">Logout</a>  <!-- <-- use logout URL -->
+                            {% else %}
+                                <a href="{% url 'login' %}" class="nav-item nav-link">Login</a>
+                                <a href="{% url 'register' %}" class="nav-item nav-link">Register</a>
+                            {% endif %}
                         </div>
                     </div>
                 </nav>
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+        {% if 'logout' in message.tags %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <script>
+                setTimeout(function() {
+                    $('.alert').fadeOut('slow', function() { $(this).remove(); });
+                }, 3000);  <!-- auto-dismiss after 3 seconds -->
+            </script>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
+
             </div>
         </div>
     </div>
@@ -152,9 +182,9 @@
 
 
     <!-- Page Header Start -->
-    <div class="container-fluid bg-secondary mb-5">
-        <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
-            <h1 class="font-weight-semi-bold text-uppercase mb-3">Shop Detail</h1>
+    <div class="container-fluid bg-secondary">
+        <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 200px">
+            <h2 class="font-weight-semi-bold text-uppercase mb-3">Shop Detail</h2>
             <div class="d-inline-flex">
                 <p class="m-0"><a href="{% url 'index' %}">Home</a></p>
                 <p class="m-0 px-2">-</p>
@@ -172,17 +202,9 @@
                 <div id="product-carousel" class="carousel slide" data-ride="carousel">
                     <div class="carousel-inner border">
                         <div class="carousel-item active">
-                            <img class="w-100 h-100" src="static/img/product-1.jpg" alt="Image">
+                            <img class="w-100 h-100" src="{{selected_product.product_img.url}}" alt="Image">
                         </div>
-                        <div class="carousel-item">
-                            <img class="w-100 h-100" src="static/img/product-2.jpg" alt="Image">
-                        </div>
-                        <div class="carousel-item">
-                            <img class="w-100 h-100" src="static/img/product-3.jpg" alt="Image">
-                        </div>
-                        <div class="carousel-item">
-                            <img class="w-100 h-100" src="static/img/product-4.jpg" alt="Image">
-                        </div>
+                        
                     </div>
                     <a class="carousel-control-prev" href="#product-carousel" data-slide="prev">
                         <i class="fa fa-2x fa-angle-left text-dark"></i>
@@ -194,8 +216,24 @@
             </div>
 
             <div class="col-lg-7 pb-5">
-                <h3 class="font-weight-semi-bold">Colorful Stylish Shirt</h3>
+                <h3 class="font-weight-semi-bold">{{selected_product.product_name}}</h3>
                 <div class="d-flex mb-3">
+
+                     <style>
+                                            #rating-box {
+                                                font-size: 18px;
+                                                cursor: pointer;
+                                                color: #ccc;
+                                            }
+
+                                            .fa-star,
+                                            .fa-star-half-o {
+                                                color: #C17A75; /* yellow */
+                                            }
+
+
+                                        </style>
+
                     <div class="text-primary mr-2">
                         <small class="fas fa-star"></small>
                         <small class="fas fa-star"></small>
@@ -205,56 +243,30 @@
                     </div>
                     <small class="pt-1">(50 Reviews)</small>
                 </div>
-                <h3 class="font-weight-semi-bold mb-4">$150.00</h3>
+                <h3 class="font-weight-semi-bold mb-4">Rs. {{selected_product.product_price}}</h3>
                 <p class="mb-4">Volup erat ipsum diam elitr rebum et dolor. Est nonumy elitr erat diam stet sit clita ea. Sanc invidunt ipsum et, labore clita lorem magna lorem ut. Erat lorem duo dolor no sea nonumy. Accus labore stet, est lorem sit diam sea et justo, amet at lorem et eirmod ipsum diam et rebum kasd rebum.</p>
                 <div class="d-flex mb-3">
                     <p class="text-dark font-weight-medium mb-0 mr-3">Sizes:</p>
                     <form>
+                        {% for size in size_id %}
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="size-1" name="size">
-                            <label class="custom-control-label" for="size-1">XS</label>
+                            <input type="radio" class="custom-control-input" id="size{{size.id}}" name="size" value="{{size.id}}">
+                            <label class="custom-control-label" for="size{{size.id}}">{{size.size_name}}</label>
                         </div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="size-2" name="size">
-                            <label class="custom-control-label" for="size-2">S</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="size-3" name="size">
-                            <label class="custom-control-label" for="size-3">M</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="size-4" name="size">
-                            <label class="custom-control-label" for="size-4">L</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="size-5" name="size">
-                            <label class="custom-control-label" for="size-5">XL</label>
-                        </div>
+                        {% endfor %}
+                        
                     </form>
                 </div>
                 <div class="d-flex mb-4">
                     <p class="text-dark font-weight-medium mb-0 mr-3">Colors:</p>
                     <form>
+                        {% for color in color_id %}
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="color-1" name="color">
-                            <label class="custom-control-label" for="color-1">Black</label>
+                            <input type="radio" class="custom-control-input" id="color{{color.id}}" name="color" value="{{color.id}}">
+                            <label class="custom-control-label" for="color{{color.id}}">{{color.color_name}}</label>
                         </div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="color-2" name="color">
-                            <label class="custom-control-label" for="color-2">White</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="color-3" name="color">
-                            <label class="custom-control-label" for="color-3">Red</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="color-4" name="color">
-                            <label class="custom-control-label" for="color-4">Blue</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" class="custom-control-input" id="color-5" name="color">
-                            <label class="custom-control-label" for="color-5">Green</label>
-                        </div>
+                        {% endfor %}
+                        
                     </form>
                 </div>
                 <div class="d-flex align-items-center mb-4 pt-2">
@@ -362,34 +374,137 @@
                                     </div>
                                 </div>
                             </div>
+
+
+
+
                             <div class="col-md-6">
                                 <h4 class="mb-4">Leave a review</h4>
                                 <small>Your email address will not be published. Required fields are marked *</small>
-                                <div class="d-flex my-3">
-                                    <p class="mb-0 mr-2">Your Rating * :</p>
-                                    <div class="text-primary">
-                                        <i class="far fa-star"></i>
-                                        <i class="far fa-star"></i>
-                                        <i class="far fa-star"></i>
-                                        <i class="far fa-star"></i>
-                                        <i class="far fa-star"></i>
+                                <form id="reviewForm" action="{% url 'save_review' %}" method="post">
+                                {% csrf_token %}
+                                 <input type="hidden" name="product_id" value="{{ selected_product.id }}">
+                                   
+                                    <!-- Old rating (to auto-fill) -->
+                                    <input type="hidden" id="old-rating" value="{{ user_rating }}">
+                                    <div class="d-flex my-3">
+                                    <p class="mb-0 mr-2">Your Rating * </p>
+                                        
+
+                                        <style>
+                                            #rating-box {
+                                                font-size: 18px;
+                                                cursor: pointer;
+                                                color: #ccc;
+                                            }
+
+                                            .fa-star,
+                                            .fa-star-half-o {
+                                                color: #C17A75; /* yellow */
+                                            }
+
+
+                                        </style>
+
+                                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+                                    <div id="rating-box">
+                                        <span class="fa fa-star-o star" data-index="1"></span>
+                                        <span class="fa fa-star-o star" data-index="2"></span>
+                                        <span class="fa fa-star-o star" data-index="3"></span>
+                                        <span class="fa fa-star-o star" data-index="4"></span>
+                                        <span class="fa fa-star-o star" data-index="5"></span>
+
                                     </div>
+                                    <input type="hidden" id="rating-input" name="rating">
+
+                                    <p><span id="rating-display" style="margin-left: 20px;">0</span>/5</p>
+                                    
+
+                                    <script>
+                                            const stars = document.querySelectorAll(".star");
+                                        const ratingSpan = document.getElementById("rating-display");
+                                        const ratingInput = document.getElementById("rating-input");
+                                        const oldRating = parseFloat(document.getElementById("old-rating").value);
+
+                                        let selectedRating = 0;
+                                        
+                                        // Auto-fill user's old rating
+                                            if (oldRating > 0) {
+                                                selectedRating = oldRating;
+                                                ratingSpan.innerText = oldRating;
+                                                ratingInput.value = oldRating;
+                                                fillStars(oldRating);
+                                            }
+
+                                        stars.forEach(star => {
+
+                                            star.addEventListener("mousemove", function (e) {
+                                                let idx = parseInt(this.dataset.index);
+                                                let rect = this.getBoundingClientRect();
+                                                let x = e.clientX - rect.left;
+
+                                                let value = x < rect.width / 2 ? idx - 0.5 : idx;
+
+                                                fillStars(value);
+
+                                                ratingSpan.innerText = value;
+                                            });
+
+                                            star.addEventListener("mouseout", function () {
+                                                fillStars(selectedRating);
+
+                                                ratingSpan.innerText = selectedRating || 0;
+                                            });
+
+                                            star.addEventListener("click", function (e) {
+                                                let idx = parseInt(this.dataset.index);
+                                                let rect = this.getBoundingClientRect();
+                                                let x = e.clientX - rect.left;
+
+                                                selectedRating = x < rect.width / 2 ? idx - 0.5 : idx;
+
+                                                ratingSpan.innerText = selectedRating;
+                                                ratingInput.value = selectedRating;  // store rating for form
+                                            });
+                                        });
+
+                                        function fillStars(value) {
+                                            stars.forEach(star => {
+                                                let idx = parseInt(star.dataset.index);
+
+                                                star.classList.remove("fa-star", "fa-star-half-o", "fa-star-o");
+
+                                                if (value >= idx) {
+                                                    star.classList.add("fa-star");
+                                                } else if (value + 0.5 === idx) {
+                                                    star.classList.add("fa-star-half-o");
+                                                } else {
+                                                    star.classList.add("fa-star-o");
+                                                }
+                                            });
+                                        }
+
+                                    </script>
+
+
+
+
                                 </div>
-                                <form>
                                     <div class="form-group">
-                                        <label for="message">Your Review *</label>
-                                        <textarea id="message" cols="30" rows="5" class="form-control"></textarea>
+                                        <label for="message">Your Review</label>
+                                        <textarea id="message" cols="30" rows="5" class="form-control" name="review">{{ user_review|default_if_none:"" }}</textarea>
                                     </div>
                                     <div class="form-group">
-                                        <label for="name">Your Name *</label>
-                                        <input type="text" class="form-control" id="name">
+                                        <label for="name">Your Name</label>
+                                        <input type="text" class="form-control" id="name" name="name" value="{{user_name}}" readonly>
                                     </div>
                                     <div class="form-group">
-                                        <label for="email">Your Email *</label>
-                                        <input type="email" class="form-control" id="email">
+                                        <label for="email">Your Email</label>
+                                        <input type="email" class="form-control" id="email" name="email" value="{{user_email}}" readonly>
                                     </div>
                                     <div class="form-group mb-0">
-                                        <input type="submit" value="Leave Your Review" class="btn btn-primary px-3">
+                                        <button type="submit" class="btn btn-primary px-3">Leave Your Review</button>
                                     </div>
                                 </form>
                             </div>
@@ -490,7 +605,7 @@
         </div>
     </div>
     <!-- Products End -->
-
+{% endblock %}
 
     <!-- Footer Start -->
     <div class="container-fluid bg-secondary text-dark mt-5 pt-5">

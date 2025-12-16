@@ -12,11 +12,7 @@ class Sub_category(models.Model):
     def __str__(self):
         return self.sbcat_name
     
-# class Sub_sub_category(models.Model):
-#     sb_sbcat_name=models.CharField(max_length=100)
-#     main_cat=models.ForeignKey(Main_category,on_delete=models.CASCADE,null=True,related_name='sub_subcategories',blank=True)
-#     def __str__(self):
-#         return self.sb_sbcat_name
+
     
 class Color(models.Model):
     color_name=models.CharField(max_length=100)
@@ -33,7 +29,7 @@ class Price_range(models.Model):
     max_price=models.IntegerField()
     def __str__(self):
         return self.min_price.__str__() + " Rs. - " + self.max_price.__str__() + " Rs."
-    
+   
 class Product(models.Model):
     product_name=models.CharField(max_length=200)
     product_price=models.IntegerField()
@@ -46,3 +42,37 @@ class Product(models.Model):
     def __str__(self):
         return self.product_name
     
+class Register(models.Model):
+    full_name=models.CharField(max_length=100)
+    email_id=models.EmailField()
+    phone_no=models.CharField(max_length=10)
+    password=models.CharField(max_length=100)
+    confirm_password=models.CharField(max_length=100)
+    def __str__(self):
+        return self.full_name
+    
+
+class Rating(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
+    register_user = models.ForeignKey(Register, on_delete=models.CASCADE, blank=True, null=True)  # Use 'user' instead of 'user_id'
+    rating = models.DecimalField(max_digits=2, decimal_places=1, null=False)
+
+    # rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)], null=False)  # rating should not be blank or null
+    review = models.TextField(blank=True, null=True)  # Allow comment to be optional
+    name = models.CharField(max_length=50, blank=True, null=True)  # If you want it optional
+    email = models.EmailField(max_length=50, blank=True, null=True)  # Optional if using user model for authentication
+    date = models.DateTimeField(auto_now_add=True)  # auto_now_add to avoid updating it on every save
+
+    def __str__(self):                             
+        return f"Rating by {self.name or 'Anonymous'} for {self.product.product_name}"
+    
+class Cart(models.Model):
+    product=models.ForeignKey(Product,on_delete=models.CASCADE,null=True,blank=True)
+    user=models.ForeignKey(Register,on_delete=models.CASCADE,null=True,blank=True)
+    quantity=models.IntegerField(default=1)
+    image=models.ImageField(upload_to='static/image/',null=True,blank=True)
+    price=models.IntegerField(null=True,blank=True)
+    name=models.CharField(max_length=200,null=True,blank=True)
+    total_price=models.IntegerField(null=True,blank=True)
+    def __str__(self):
+        return self.product.product_name + " - " + self.user.full_name
