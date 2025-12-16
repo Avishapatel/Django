@@ -34,18 +34,40 @@ def cart(request):
 
         if not product_id:
             cart_id=Cart.objects.filter(user=user_name)
+            total_amount=0
+            for i in cart_id:
+                total_amount=i.total_price + total_amount if 'total_amount' in locals() else i.total_price
+            if total_amount >=999:
+                shipping_amount=50
+            else:
+                shipping_amount=0
+            final_total_amount=total_amount + shipping_amount
             contaxt={'c_id':c_id,
                      'user_name':user_name,
-                     'cart_id':cart_id
+                     'cart_id':cart_id,
+                     'total_amount':total_amount,
+                     'shipping_amount':shipping_amount,
+                     'final_total_amount':final_total_amount
                      }
             return render(request,'cart.html',contaxt)
         else:
             selected_product=Product.objects.get(id=product_id) 
             cart_id=Cart.objects.filter(user=user_name)
+            total_amount=0
+            for i in cart_id:
+                total_amount=i.total_price + total_amount if 'total_amount' in locals() else i.total_price
+            if total_amount >=999:
+                shipping_amount=50
+            else:
+                shipping_amount=0
+            final_total_amount=total_amount + shipping_amount
             contaxt={'c_id':c_id,
                     'user_name':user_name,
                     'selected_product':selected_product,
-                    'cart_id':cart_id
+                    'cart_id':cart_id,
+                    'total_amount':total_amount,
+                    'shipping_amount':shipping_amount,
+                    'final_total_amount':final_total_amount
                     }
             return render(request,'cart.html',contaxt)
     else:
@@ -502,21 +524,7 @@ def save_review(request):
         return redirect(f'/view_details?product_id={product_id}')
     return render(request,'index.html')
 
-# def cart_view(request):
-#     if 'email_id' in request.session or 'user_name' in request.session:
-#         user_name=Register.objects.get(email_id=request.session['email_id'])
-#         c_id=Main_category.objects.all()
-#         product_id=request.GET.get('product_id')
-#         selected_product=Product.objects.get(id=product_id) 
-#         cart_id=Cart.objects.filter(user=user_name)
-#         contaxt={'c_id':c_id,
-#                  'user_name':user_name,
-#                  'selected_product':selected_product,
-#                  'cart_id':cart_id
-#                  }
-#         return render(request,'cart.html',contaxt)
-#     else:
-#         return render(request,'login.html')
+
 
 def add_to_cart(request):
     product_id = request.GET.get('product_id')
@@ -545,4 +553,56 @@ def add_to_cart(request):
             
     )
     return redirect(f'/cart?product_id={product_id}')
-   
+
+def plus_cart(request):
+    if request.method == 'POST':
+        product_id = request.GET['product_id']
+        print(product_id)
+        selected_product = Product.objects.get(id=product_id)
+        print(selected_product)
+        user_name=Register.objects.get(email_id=request.session['email_id'])
+        print(user_name)
+       
+        cart_item = Cart.objects.get(product=selected_product, user=user_name)
+        print(cart_item)
+        cart_item.quantity += 1     
+        print(cart_item.quantity)
+        print(cart_item.price)    
+        cart_item.total_price = cart_item.price * cart_item.quantity
+        print(cart_item,cart_item.quantity,cart_item.total_price)
+        cart_item.save()
+        
+        return redirect('/cart')
+       
+    return render(request,'cart.html')
+
+def minus_cart(request):
+    if request.method == 'POST':
+        product_id = request.GET['product_id']
+        selected_product = Product.objects.get(id=product_id)
+        user_name=Register.objects.get(email_id=request.session['email_id'])
+       
+        cart_item = Cart.objects.get(product=selected_product, user=user_name)
+        if cart_item.quantity > 1:
+            cart_item.quantity -= 1     
+            cart_item.total_price = cart_item.price * cart_item.quantity
+            cart_item.save()
+        else:
+            cart_item.delete()
+        
+        return redirect('cart')
+       
+    return render(request,'cart.html')
+
+def remove_cart(request):
+    if request.method == 'POST':
+        product_id = request.GET['product_id']
+        selected_product = Product.objects.get(id=product_id)
+        user_name=Register.objects.get(email_id=request.session['email_id'])
+       
+        cart_item = Cart.objects.get(product=selected_product, user=user_name)
+        cart_item.delete()
+        
+        return redirect('cart')
+       
+    return render(request,'cart.html')

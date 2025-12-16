@@ -12,4 +12,4 @@ admin.site.register(Price_range)
 admin.site.register(Register)
 admin.site.register(Rating)
 admin.site.register(Cart)
-admin.site.register(Order)
+
