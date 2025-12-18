@@ -77,12 +77,3 @@ class Cart(models.Model):
     def __str__(self):
         return self.product.product_name + " - " + self.user.full_name
     
-class Order(models.Model):
-    cart=models.ForeignKey(Cart,on_delete=models.CASCADE,null=True,blank=True)
-    user=models.ForeignKey(Register,on_delete=models.CASCADE,null=True,blank=True)
-    order_date=models.DateTimeField(auto_now_add=True)
-    address=models.TextField()
-    phone_no=models.CharField(max_length=10)
-    total_price=models.IntegerField(null=True,blank=True)
-    def __str__(self):
-        return self.user.full_name + " - " + self.cart.product.product_name

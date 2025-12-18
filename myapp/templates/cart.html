@@ -198,7 +198,7 @@
                 <table class="table table-bordered text-center mb-0">
                     <thead class="bg-secondary text-dark">
                         <tr>
-                            <th>Products</th>
+                            <th colspan="2">Products</th>
                             <th>Price</th>
                             <th>Quantity</th>
                             <th>Total</th>
@@ -208,27 +208,40 @@
                     {% for item in cart_id %}
                     <tbody class="align-middle">
                         <tr>
-                            <td class="align-middle"><img src="{{item.image.url}}" alt="" style="width: 50px;margin-right: 10px;">{{item.name}}</td>
+                            <td class="align-middle"><img src="{{item.image.url}}" alt="" style="width: 50px;"></td>
+                            <td class="align-middle">{{item.name}}</td>
                             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
                             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/fontawesome.min.css" integrity="sha512-M5Kq4YVQrjg5c2wsZSn27Dkfm/2ALfxmun0vUE3mPiJyK53hQBHYCVAtvMYEC7ZXmYLg8DVG4tF8gD27WmDbsg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
                             <td class="align-middle"><i class="fa-solid fa-indian-rupee-sign"></i>{{item.price}}</td>
                             <td class="align-middle">
                                 <div class="input-group quantity mx-auto" style="width: 100px;">
+                                    <form method="post" action="{% url 'minus_cart' %}?product_id={{item.product.id}}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="product_id" value="{{item.product.id}}">
                                     <div class="input-group-btn">
                                         <button class="btn btn-sm btn-primary btn-minus" >
                                         <i class="fa fa-minus"></i>
                                         </button>
+                                    </form>
                                     </div>
-                                    <input type="text" class="form-control form-control-sm bg-secondary text-center" value="1">
+                                    <input type="text" class="form-control form-control-sm bg-secondary text-center" value="{{item.quantity}}">
+                                    <form method="post" action="{% url 'plus_cart' %}?product_id={{item.product.id}}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="product_id" value="{{item.product.id}}">
                                     <div class="input-group-btn">
                                         <button class="btn btn-sm btn-primary btn-plus">
                                             <i class="fa fa-plus"></i>
                                         </button>
                                     </div>
+                                    </form>
                                 </div>
                             </td>
                             <td class="align-middle"><i class="fa-solid fa-indian-rupee-sign"></i>{{item.total_price}}</td>
+                            <form method="post" action="{% url 'remove_cart' %}?product_id={{item.product.id}}">
+                                {% csrf_token %}
+                                <input type="hidden" name="product_id" value="{{item.product.id}}">
                             <td class="align-middle"><button class="btn btn-sm btn-primary"><i class="fa fa-times"></i></button></td>
+                            </form>
                         </tr>
                         {% endfor %}
                         <!-- <tr>
@@ -334,17 +347,17 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3 pt-1">
                             <h6 class="font-weight-medium">Subtotal</h6>
-                            <h6 class="font-weight-medium">$150</h6>
+                            <h6 class="font-weight-medium"><i class="fa-solid fa-indian-rupee-sign"></i>{{total_amount}}</h6>
                         </div>
                         <div class="d-flex justify-content-between">
                             <h6 class="font-weight-medium">Shipping</h6>
-                            <h6 class="font-weight-medium">$10</h6>
+                            <h6 class="font-weight-medium"><i class="fa-solid fa-indian-rupee-sign"></i>{{shipping_amount}}</h6>
                         </div>
                     </div>
                     <div class="card-footer border-secondary bg-transparent">
                         <div class="d-flex justify-content-between mt-2">
                             <h5 class="font-weight-bold">Total</h5>
-                            <h5 class="font-weight-bold">$160</h5>
+                            <h5 class="font-weight-bold"><i class="fa-solid fa-indian-rupee-sign"></i>{{final_total_amount}}</h5>
                         </div>
                         <button class="btn btn-block btn-primary my-3 py-3">Proceed To Checkout</button>
                     </div>
