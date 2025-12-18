@@ -8,7 +8,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="Free HTML Templates" name="keywords">
     <meta content="Free HTML Templates" name="description">
-
+    
     <!-- Favicon -->
     <link href="img/favicon.ico" rel="icon">
 
@@ -206,8 +206,7 @@
                 <!-- Price Start -->
                 <div class="border-bottom mb-4 pb-4">
                     <h5 class="font-weight-semi-old mb-4">Filter by price</h5>
-                    <form action="{% url 'price_filter' %}" method="post">
-                        {% csrf_token %}
+                    <form action="{% url 'price_filter' %}" method="get">
                         <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
                             <input type="checkbox" class="custom-control-input" checked id="price-all">
                             <label class="custom-control-label" for="price-all">All Price</label>
@@ -229,8 +228,7 @@
                 <!-- Color Start -->
                 <div class="border-bottom mb-4 pb-4">
                     <h5 class="font-weight-semi-bold mb-4">Filter by color</h5>
-                    <form action="{% url 'color_filter' %}" method="post">
-                        {% csrf_token %}
+                    <form action="{% url 'color_filter' %}" method="get">
                         
                         <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
                             <input type="checkbox" class="custom-control-input" checked id="color-all">
@@ -253,8 +251,7 @@
                 <!-- Size Start -->
                 <div class="mb-5">
                     <h5 class="font-weight-semi-bold mb-4">Filter by size</h5>
-                    <form action="{% url 'size_filter' %}" method="post">
-                        {% csrf_token %}
+                    <form action="{% url 'size_filter' %}" method="get">
                         
                         <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
                             <input type="checkbox" class="custom-control-input" checked id="size-all">
@@ -342,8 +339,12 @@
 
         {# FIRST + PREVIOUS (not on page 1) #}
         {% if page_obj.has_previous %}
-            <li class="pages"><a href="?page=1">First</a></li>
-            <li class="pages"><a href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+            <li class="pages">
+              <a href="?page=1{% if query_string %}&{{ query_string }}{% endif %}">First</a>
+            </li>
+            <li class="pages">
+              <a href="?page={{ page_obj.previous_page_number }}{% if query_string %}&{{ query_string }}{% endif %}">Previous</a>
+            </li>
         {% endif %}
 
         {# PAGE NUMBERS #}
@@ -360,7 +361,7 @@
                     </li>
                 {% else %}
                     <li class="pages">
-                        <a href="?page={{ num }}">{{ num }}</a>
+                        <a href="?page={{ num }}{% if query_string %}&{{ query_string }}{% endif %}">{{ num }}</a>
                     </li>
                 {% endif %}
 
@@ -369,8 +370,12 @@
 
         {# NEXT + LAST (not on last page) #}
         {% if page_obj.has_next %}
-            <li class="pages"><a href="?page={{ page_obj.next_page_number }}">Next</a></li>
-            <li class="pages"><a href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+            <li class="pages">
+              <a href="?page={{ page_obj.next_page_number }}{% if query_string %}&{{ query_string }}{% endif %}">Next</a>
+            </li>
+            <li class="pages">
+              <a href="?page={{ page_obj.paginator.num_pages }}{% if query_string %}&{{ query_string }}{% endif %}">Last</a>
+            </li>
         {% endif %}
     </ul>
 </div>
