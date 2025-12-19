@@ -77,3 +77,19 @@ class Cart(models.Model):
     def __str__(self):
         return self.product.product_name + " - " + self.user.full_name
     
+class Billing_address(models.Model):
+    user=models.ForeignKey(Register,on_delete=models.CASCADE,null=True,blank=True)
+    first_name=models.CharField(max_length=100)
+    last_name=models.CharField(max_length=100)
+    email_id=models.EmailField()
+    phone_no=models.IntegerField(max_length=10)
+    address_l1=models.TextField()
+    address_l2=models.TextField()
+    city=models.CharField(max_length=100)
+    state=models.CharField(max_length=100)
+    country=models.CharField(max_length=100)
+    zip_code=models.IntegerField(max_length=10)
+    bill_amount=models.IntegerField(null=True,blank=True)
+    def __str__(self):
+        return self.first_name + " " + self.last_name
+    

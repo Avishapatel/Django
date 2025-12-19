@@ -44,5 +44,6 @@ urlpatterns = [
     path("latest_products", views.latest_products, name="latest_products"),
     path("popular_products", views.popular_products, name="popular_products"),
     path("best_rated_products", views.best_rated_products, name="best_rated_products"),
+    path("add_billing_address", views.add_billing_address, name="add_billing_address"),
 
 ]
