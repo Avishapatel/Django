@@ -205,8 +205,8 @@ def shop(request):
 def color_filter(request):
      if 'email_id' in request.session or 'user_name' in request.session:
         user_name=Register.objects.get(email_id=request.session['email_id'])
-        # Support POST (form) and fallback to GET, accept multiple values
-        selected_color = request.POST.getlist('color') or request.GET.getlist('color') or []
+        # Prefer GET for filter vals (fall back to POST)
+        selected_color = request.GET.getlist('color') or request.POST.getlist('color') or []
    
         if selected_color:
             p_id = Product.objects.filter(color__id__in=selected_color).distinct()
@@ -220,10 +220,16 @@ def color_filter(request):
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
+        # Preserve other query params (without page) for pagination links
+        query_params = request.GET.copy()
+        query_params.pop('page', None)
+        query_string = query_params.urlencode()
+
        
         contaxt = {
         "p_id": p_id,
         "page_obj": page_obj,
+        "query_string": query_string,
         "c_id": Main_category.objects.all(),
         "color_id": Color.objects.annotate(product_count=Count('product')),
         "size_id": Size.objects.annotate(product_count=Count('product')),
@@ -241,7 +247,8 @@ def color_filter(request):
 def size_filter(request):
      if 'email_id' in request.session or 'user_name' in request.session:
         user_name=Register.objects.get(email_id=request.session['email_id'])
-        selected_size=request.GET.getlist('size') or request.POST.getlist('size') or []
+        # Prefer GET for filter vals (fall back to POST)
+        selected_size = request.GET.getlist('size') or request.POST.getlist('size') or []
         if selected_size:
             p_id=Product.objects.filter(size__id__in=selected_size).distinct()
         else:
@@ -254,10 +261,15 @@ def size_filter(request):
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
+        query_params = request.GET.copy()
+        query_params.pop('page', None)
+        query_string = query_params.urlencode()
+
         
         contaxt={
         "p_id":p_id,
         "page_obj": page_obj,
+        "query_string": query_string,
         "c_id": Main_category.objects.all(),
         "color_id": Color.objects.annotate(product_count=Count('product')),
         "size_id": Size.objects.annotate(product_count=Count('product')),
@@ -570,6 +582,8 @@ def add_to_cart(request):
     )
     return redirect(f'/cart?product_id={product_id}')
 
+<<<<<<< HEAD
+=======
 def plus_cart(request):
     if request.method == 'POST':
         product_id = request.GET['product_id']
@@ -615,6 +629,7 @@ def remove_cart(request):
         return redirect('cart')
        
     return render(request,'cart.html')
+<<<<<<< HEAD
 
 def add_billing_address(request):
     if request.method == "POST":
@@ -643,3 +658,6 @@ def add_billing_address(request):
         )
         return redirect('checkout')
     return render(request, 'checkout.html')
+=======
+>>>>>>> a5610e4afbf021f98f8450ec0aee2163e17183db
+>>>>>>> 5e964d57dbff47cc06558b4c5959b633ec1162c7
