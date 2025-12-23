@@ -306,79 +306,129 @@
                     {% for i in page_obj %}
                     <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
                         <div class="card product-item border-0 mb-4">
+                            
                             <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0" style="height: 300px;">
+                                
                                 <img class="img-fluid w-100px" src="{{i.product_img.url}}" alt="">
                             </div>
-                            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                            <div class="card-body border-left border-right text-center p-0 pt-4">
                                 <h6 class="text-truncate mb-3">{{i.product_name}}</h6>
                                 <div class="d-flex justify-content-center">
-                                    <h6>{{i.product_price}} Rs.</h6><h6 class="text-muted ml-2"></h6>
+                                    <h6><i class="fa-solid fa-indian-rupee-sign"></i>{{i.product_price}}</h6><h6 class="text-muted ml-2"></h6>
                                 </div>
+                                <form action="{% url 'add_wishlist' %}?product_id={{i.id}}" method="post">
+                                {% csrf_token %}
+                                {% if i.id in wishlist_product_ids %}
+                                <div class="text-right pr-2 pb-1">
+                                    <button type="submit" style="background:none;border:none;padding:0;outline:none;box-shadow:none;">
+                                        <i class="fa-sharp fa-solid fa-heart" style="font-size:22px; line-height:1;color: red;"></i>
+                                    </button>
+                                </div>
+                                {% else %}
+                                <div class="text-right pr-2 pb-1">
+                                    <button type="submit" style="background:none;border:none;padding:0;outline:none;box-shadow:none;">
+                                        <i class="fa-sharp fa-regular fa-heart" style="font-size:22px; line-height:1;"></i>
+                                    </button>
+                                </div>
+                                {% endif %}
+                                </form>
                             </div>
-                            <div class="card-footer d-flex justify-content-between bg-light border">
+                            
+                            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+                            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/fontawesome.min.css" integrity="sha512-M5Kq4YVQrjg5c2wsZSn27Dkfm/2ALfxmun0vUE3mPiJyK53hQBHYCVAtvMYEC7ZXmYLg8DVG4tF8gD27WmDbsg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+                            
+                            <!-- <div class="card-footer d-flex justify-content-between bg-light border">
                                 <a href="{% url 'view_details' %}?product_id={{i.id}}" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
+                                {% if i.id in cart_product_ids %}
+                                    <a href="{% url 'cart' %}" class="btn btn-sm text-dark p-0"><i class="fa-duotone fa-solid fa-bag-shopping text-primary mr-1"></i>Go to Bag</a>
+                                {% else %}
                                 <a href="{% url 'add_to_cart' %}?product_id={{i.id}}" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
-                            </div>
+                                {% endif %}
+                            </div> -->
+                             <div class="card-footer d-flex bg-light border p-1" style="flex-wrap: nowrap;">
+
+                                <a href="{% url 'view_details' %}?product_id={{i.id}}"
+                                class="btn btn-sm btn-outline-dark text-center custom-btn mr-1 w-50">
+                                    <i class="fas fa-eye text-primary mr-1"></i>
+                                    <span class="btn-text">View Detail</span>
+                                </a>
+
+                                {% if i.id in cart_product_ids %}
+                                    <a href="{% url 'cart' %}"
+                                    class="btn btn-sm btn-outline-dark text-center custom-btn w-50" style="background-color:#D09C97; color: white;">
+                                        <i class="fa-solid fa-bag-shopping mr-1"></i>
+                                        <span class="btn-text">Go to Bag</span>
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'add_to_cart' %}?product_id={{i.id}}"
+                                    class="btn btn-sm btn-outline-dark text-center custom-btn w-50">
+                                        <i class="fas fa-shopping-cart text-primary mr-1"></i>
+                                        <span class="btn-text">Add To Cart</span>
+                                    </a>
+                                {% endif %}
+
+                    </div>
+
                         </div>
                     </div>
                     {% endfor %}
                     
                 </div>
-                <!-- Paginator code -->
-                 <style>
-                    .pages{
-                        margin-top: 7px;
-                        color: blue;
-                    }
-                    .pages a{
-                            font-size: 18px;
-                    }
-                 </style>
- <div class="pagination-area" style="margin:15px 0; text-align:center;">
-    <ul style="list-style:none; display:inline-flex; gap:13px; padding:0;">
+                                    <!-- Paginator code -->
+                                    <style>
+                                        .pages{
+                                            margin-top: 7px;
+                                            color: blue;
+                                        }
+                                        .pages a{
+                                                font-size: 18px;
+                                        }
+                                    </style>
+                    <div class="pagination-area" style="margin:15px 0; text-align:center;">
+                        <ul style="list-style:none; display:inline-flex; gap:13px; padding:0;">
 
-        {# FIRST + PREVIOUS (not on page 1) #}
-        {% if page_obj.has_previous %}
-            <li class="pages">
-              <a href="?page=1{% if query_string %}&{{ query_string }}{% endif %}">First</a>
-            </li>
-            <li class="pages">
-              <a href="?page={{ page_obj.previous_page_number }}{% if query_string %}&{{ query_string }}{% endif %}">Previous</a>
-            </li>
-        {% endif %}
+                            {# FIRST + PREVIOUS (not on page 1) #}
+                            {% if page_obj.has_previous %}
+                                <li class="pages">
+                                <a href="?page=1{% if query_string %}&{{ query_string }}{% endif %}">First</a>
+                                </li>
+                                <li class="pages">
+                                <a href="?page={{ page_obj.previous_page_number }}{% if query_string %}&{{ query_string }}{% endif %}">Previous</a>
+                                </li>
+                            {% endif %}
 
-        {# PAGE NUMBERS #}
-        {% for num in page_obj.paginator.page_range %}
-            {% if num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %}
-                
-                {% if page_obj.number == num %}
-                    <li  class="pages" style="
-                        font-weight:bold; 
-                        padding:5px 12px; 
-                        border:1px solid blue;
-                        background:#f2f2f2;">
-                        {{ num }} 
-                    </li>
-                {% else %}
-                    <li class="pages">
-                        <a href="?page={{ num }}{% if query_string %}&{{ query_string }}{% endif %}">{{ num }}</a>
-                    </li>
-                {% endif %}
+                            {# PAGE NUMBERS #}
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %}
+                                    
+                                    {% if page_obj.number == num %}
+                                        <li  class="pages" style="
+                                            font-weight:bold; 
+                                            padding:5px 12px; 
+                                            border:1px solid blue;
+                                            background:#f2f2f2;">
+                                            {{ num }} 
+                                        </li>
+                                    {% else %}
+                                        <li class="pages">
+                                            <a href="?page={{ num }}{% if query_string %}&{{ query_string }}{% endif %}">{{ num }}</a>
+                                        </li>
+                                    {% endif %}
 
-            {% endif %}
-        {% endfor %}
+                                {% endif %}
+                            {% endfor %}
 
-        {# NEXT + LAST (not on last page) #}
-        {% if page_obj.has_next %}
-            <li class="pages">
-              <a href="?page={{ page_obj.next_page_number }}{% if query_string %}&{{ query_string }}{% endif %}">Next</a>
-            </li>
-            <li class="pages">
-              <a href="?page={{ page_obj.paginator.num_pages }}{% if query_string %}&{{ query_string }}{% endif %}">Last</a>
-            </li>
-        {% endif %}
-    </ul>
-</div>
+                            {# NEXT + LAST (not on last page) #}
+                            {% if page_obj.has_next %}
+                                <li class="pages">
+                                <a href="?page={{ page_obj.next_page_number }}{% if query_string %}&{{ query_string }}{% endif %}">Next</a>
+                                </li>
+                                <li class="pages">
+                                <a href="?page={{ page_obj.paginator.num_pages }}{% if query_string %}&{{ query_string }}{% endif %}">Last</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
 
             </div>
             <!-- Shop Product End-->

@@ -12,3 +12,7 @@ admin.site.register(Register)
 admin.site.register(Rating)
 admin.site.register(Cart)
 admin.site.register(Billing_address)
+admin.site.register(Order)
+admin.site.register(Wishlist)
+admin.site.register(Discount)
+

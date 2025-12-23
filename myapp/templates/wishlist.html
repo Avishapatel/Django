@@ -90,8 +90,8 @@
         </div>
     </div>
     <!-- Topbar End -->
-{% block content %}
 
+{% block content %}
     <!-- Navbar Start -->
     <div class="container-fluid mb-4">
         <div class="row border-top px-xl-5">
@@ -180,230 +180,138 @@
     <!-- Page Header Start -->
     <div class="container-fluid bg-secondary">
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 200px">
-            <h2 class="font-weight-semi-bold text-uppercase mb-3">Checkout</h2>
+            <h2 class="font-weight-semi-bold text-uppercase mb-3">Wishlist</h2>
             <div class="d-inline-flex">
                 <p class="m-0"><a href="{% url 'index' %}">Home</a></p>
                 <p class="m-0 px-2">-</p>
-                <p class="m-0">Checkout</p>
+                <p class="m-0">My Wishlist</p>
             </div>
         </div>
     </div>
     <!-- Page Header End -->
 
-
-    <!-- Checkout Start -->
+{% if wishlist_id.count == 0 %}
     <div class="container-fluid pt-5">
-        <div class="row px-xl-5">
-            <div class="col-lg-8">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 text-center">
                 
-                <div class="mb-4">
-                    <h4 class="font-weight-semi-bold mb-4">Billing Address</h4>
-                 
-                <form action="{% url 'add_billing_address' %}" method="post">
-                    {% csrf_token %}
-                    <div class="row">
-                        <div class="col-md-6 form-group">
-                            <label>First Name</label>
-                            <input class="form-control" type="text"  name="first_name" required value="{{first_name}}">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Last Name</label>
-                            <input class="form-control" type="text" name="last_name" required value="{{last_name}}">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>E-mail</label>
-                            <input class="form-control" type="email" name="email_id" required value="{{email_id}}">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Mobile No</label>
-                            <input class="form-control" type="number" name="phone_no" required value="{{phone_no}}">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Address Line 1</label>
-                            <input class="form-control" type="text" name="address_l1" required value="{{address_l1}}">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Address Line 2</label>
-                            <input class="form-control" type="text" name="address_l2" required value="{{address_l2}}">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Country</label>
-                            <select class="custom-select" name="country">
-                                <option value="India" {% if country == "India" %}selected{% endif %}>India</option>
-                                <option value="USA" {% if country == "USA" %}selected{% endif %}>USA</option>
-                                <option value="London" {% if country == "London" %}selected{% endif %}>London</option>
-                                <option value="New Zealand" {% if country == "New Zealand" %}selected{% endif %}>New Zealand</option>
-                                <option value="Australia" {% if country == "Australia" %}selected{% endif %}>Australia</option>
-                                <option value="Canada" {% if country == "Canada" %}selected{% endif %}>Canada</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6 form-group">
-                            <label>City</label>
-                            <input class="form-control" type="text" name="city" required value="{{city}}">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>State</label>
-                            <input class="form-control" type="text" name="state" required value="{{state}}">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>ZIP Code</label>
-                            <input class="form-control" type="number" name="zip_code" required value="{{zip_code}}">
-                        </div>
-                        <div class="col-md-12 form-group">
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="newaccount">
-                                <label class="custom-control-label" for="newaccount">Create an account</label>
-                            </div>
-                        </div>
-                        <div class="col-md-12 form-group">
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="shipto">
-                                <label class="custom-control-label" for="shipto"  data-toggle="collapse" data-target="#shipping-address">Ship to different address</label>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <button type="submit" class="btn btn-primary btn-block border-0 py-3" type="submit">Save Address</button>
-                        </div>
-                    </div>
-                </div>
-                </form>
-        
-                <div class="collapse mb-4" id="shipping-address">
-                    <h4 class="font-weight-semi-bold mb-4">Shipping Address</h4>
+                <div class="empty-cart">
+                      <h3 class="empty-cart__text mb-3">Your wishlist is empty</h3>
+                      <p>Save items that you like in your wishlist.<br>
+                      Review them anytime and easily <br> move them to bag.</p>
                     
-                    <div class="row">
-                        <div class="col-md-6 form-group">
-                            <label>First Name</label>
-                            <input class="form-control" type="text" placeholder="John">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Last Name</label>
-                            <input class="form-control" type="text" placeholder="Doe">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>E-mail</label>
-                            <input class="form-control" type="text" placeholder="example@email.com">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Mobile No</label>
-                            <input class="form-control" type="text" placeholder="+123 456 789">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Address Line 1</label>
-                            <input class="form-control" type="text" placeholder="123 Street">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Address Line 2</label>
-                            <input class="form-control" type="text" placeholder="123 Street">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>Country</label>
-                            <select class="custom-select">
-                                <option selected>United States</option>
-                                <option>Afghanistan</option>
-                                <option>Albania</option>
-                                <option>Algeria</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>City</label>
-                            <input class="form-control" type="text" placeholder="New York">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>State</label>
-                            <input class="form-control" type="text" placeholder="New York">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label>ZIP Code</label>
-                            <input class="form-control" type="text" placeholder="123">
-                        </div>
-                        
-                    </div>
-                    
-                </div>
-                
-                
-            </div>
-            
-            <div class="col-lg-4">
-                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/fontawesome.min.css" integrity="sha512-M5Kq4YVQrjg5c2wsZSn27Dkfm/2ALfxmun0vUE3mPiJyK53hQBHYCVAtvMYEC7ZXmYLg8DVG4tF8gD27WmDbsg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-                          
-                <div class="card border-secondary mb-5">
-                    <div class="card-header bg-secondary border-0">
-                        <h4 class="font-weight-semi-bold m-0">Order Total</h4>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="font-weight-medium mb-3">Products</h5>
-                        {% for item in cart_id %}
-                        <div class="d-flex justify-content-between mb-1 pt-1">
-                            <p class="font-weight-medium d-flex"></p>{{item.name}}</p>
-                            <p class="font-weight-medium d-flex justify-content-end" style="font-size: 15px; margin-left: 10px; margin-left: 10px;"><i class="fa-solid fa-indian-rupee-sign mb-1 pt-1"></i>{{item.total_price}}</p>
-                        </div>
-                        {% endfor %}
-                        
-                        <hr class="mt-0">
-                        <div class="d-flex justify-content-between mb-3 pt-1">
-                            <h6 class="font-weight-medium">Subtotal</h6>
-                            <h6 class="font-weight-medium"><i class="fa-solid fa-indian-rupee-sign"></i>{{total_amount}}</h6>
-                        </div>
-                        <div class="d-flex justify-content-between mb-3 pt-1">
-                            <h6 class="font-weight-medium">Shipping</h6>
-                            <h6 class="font-weight-medium" style="color: red;">+<i class="fa-solid fa-indian-rupee-sign"></i>{{shipping_amount}}</h6>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <h6 class="font-weight-medium">Discount<span style="color: blue; margin-left: 15px;">{{how_discount}}%</span></h6>
-                            <h6 class="font-weight-medium" style="color: green;">-<i class="fa-solid fa-indian-rupee-sign"></i>{{discount_amount}}</h6>
-                        </div>
-                    </div>
-                    <div class="card-footer border-secondary bg-transparent">
-                        <div class="d-flex justify-content-between mt-2">
-                            <h5 class="font-weight-bold">Total</h5>
-                            <h5 class="font-weight-bold"><i class="fa-solid fa-indian-rupee-sign"></i>{{final_total_amount}}</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="card border-secondary mb-5">
-                    <div class="card-header bg-secondary border-0">
-                        <h4 class="font-weight-semi-bold m-0">Payment</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-group">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment" id="cod">
-                                <label class="custom-control-label" for="cod">Cash on Delivery</label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment" id="paypal">
-                                <label class="custom-control-label" for="paypal">Paypal</label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment" id="directcheck">
-                                <label class="custom-control-label" for="directcheck">Direct Check</label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment" id="banktransfer">
-                                <label class="custom-control-label" for="banktransfer">Bank Transfer</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-footer border-secondary bg-transparent">
-                        <button class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3">Place Order</button>
-                    </div>
+                    <a href="{% url 'shop' %}" class="btn btn-primary empty-cart__btn" style="margin-top: 10px;">Shop Now</a>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Checkout End -->
-{% endblock %}
+{% else %}
+<div class="container-fluid pt-5">
+  <div class="row px-xl-5 pb-3">
+    {% for item in page_obj %}
+      <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+        <div class="card product-item border-0 mb-4">
+          <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0" style="height: 300px;">
+            <img class="img-fluid w-100" src="{{ item.product.product_img.url }}" alt="{{ item.product.product_name }}">
+            <!-- Remove button (top-right overlay) -->
+            <form method="post" action="{% url 'remove_wishlist' %}?product_id={{ item.product.id }}" class="position-absolute" style="top:10px; right:10px; z-index:10;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-danger p-1" title="Remove" style="border-radius:50%; width:30px; height:30px;">
+                <i class="fa fa-times" aria-hidden="true" style="line-height:1; color:#fff;"></i>
+              </button>
+            </form>
+          </div>
+          <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+            <h6 class="text-truncate mb-3">{{ item.product.product_name }}</h6>
+            <div class="d-flex justify-content-center">
+              <h6><i class="fa-solid fa-indian-rupee-sign"></i>{{ item.product.product_price }}</h6>
+            </div>
+          </div>
+          <div class="card-footer d-flex bg-light border p-1" style="flex-wrap: nowrap;">
+            <a href="{% url 'view_details' %}?product_id={{ item.product.id }}" class="btn btn-sm btn-outline-dark text-center custom-btn mr-1 w-50">
+              <i class="fas fa-eye text-primary mr-1"></i><span class="btn-text">View Detail</span>
+            </a>
+            {% if item.product.id in cart_product_ids %}
+                                    <a href="{% url 'cart' %}"
+                                    class="btn btn-sm btn-outline-dark text-center custom-btn w-50" style="background-color:#D09C97; color: white;">
+                                        <i class="fa-solid fa-bag-shopping mr-1"></i>
+                                        <span class="btn-text">Go to Bag</span>
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'add_to_cart' %}?product_id={{item.product.id}}"
+                                    class="btn btn-sm btn-outline-dark text-center custom-btn w-50">
+                                        <i class="fas fa-shopping-cart text-primary mr-1"></i>
+                                        <span class="btn-text">Add To Cart</span>
+                                    </a>
+                                {% endif %}
 
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+
+  <!-- Start Paginator code -->
+                                    <style>
+                                        .pages{
+                                            margin-top: 7px;
+                                            color: blue;
+                                        }
+                                        .pages a{
+                                                font-size: 18px;
+                                        }
+                                    </style>
+                    <div class="pagination-area" style="margin:15px 0; text-align:center;">
+                        <ul style="list-style:none; display:inline-flex; gap:13px; padding:0;">
+
+                            {# FIRST + PREVIOUS (not on page 1) #}
+                            {% if page_obj.has_previous %}
+                                <li class="pages">
+                                <a href="?page=1{% if query_string %}&{{ query_string }}{% endif %}">First</a>
+                                </li>
+                                <li class="pages">
+                                <a href="?page={{ page_obj.previous_page_number }}{% if query_string %}&{{ query_string }}{% endif %}">Previous</a>
+                                </li>
+                            {% endif %}
+
+                            {# PAGE NUMBERS #}
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %}
+                                    
+                                    {% if page_obj.number == num %}
+                                        <li  class="pages" style="
+                                            font-weight:bold; 
+                                            padding:5px 12px; 
+                                            border:1px solid blue;
+                                            background:#f2f2f2;">
+                                            {{ num }} 
+                                        </li>
+                                    {% else %}
+                                        <li class="pages">
+                                            <a href="?page={{ num }}{% if query_string %}&{{ query_string }}{% endif %}">{{ num }}</a>
+                                        </li>
+                                    {% endif %}
+
+                                {% endif %}
+                            {% endfor %}
+
+                            {# NEXT + LAST (not on last page) #}
+                            {% if page_obj.has_next %}
+                                <li class="pages">
+                                <a href="?page={{ page_obj.next_page_number }}{% if query_string %}&{{ query_string }}{% endif %}">Next</a>
+                                </li>
+                                <li class="pages">
+                                <a href="?page={{ page_obj.paginator.num_pages }}{% if query_string %}&{{ query_string }}{% endif %}">Last</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+ <!-- End Paginator code -->
+
+{% endblock %}
     <!-- Footer Start -->
     <div class="container-fluid bg-secondary text-dark mt-5 pt-5">
         <div class="row px-xl-5 pt-5">
@@ -426,7 +334,7 @@
                             <a class="text-dark mb-2" href="detail.html"><i class="fa fa-angle-right mr-2"></i>Shop Detail</a>
                             <a class="text-dark mb-2" href="cart.html"><i class="fa fa-angle-right mr-2"></i>Shopping Cart</a>
                             <a class="text-dark mb-2" href="checkout.html"><i class="fa fa-angle-right mr-2"></i>Checkout</a>
-                            <a class="text-dark" href="contact.html"><i class="fa fa-angle-right mr-2"></i>Contact Us</a>
+                            <a class="text-dark mb-2" href="contact.html"><i class="fa fa-angle-right mr-2"></i>Contact Us</a>
                         </div>
                     </div>
                     <div class="col-md-4 mb-5">
