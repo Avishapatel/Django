@@ -2963,7 +2963,10 @@ input[type="reset"].btn-block,
 input[type="button"].btn-block {
   width: 100%;
 }
-
+/* ...existing code... */
+.topbar-actions { display:inline-flex; align-items:center; gap:0.5rem; }
+.topbar-actions form { margin:0; display:inline-block; }
+/* ...existing code... */
 .fade {
   transition: opacity 0.15s linear;
 }

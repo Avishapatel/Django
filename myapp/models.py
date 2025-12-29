@@ -76,4 +76,44 @@ class Cart(models.Model):
     total_price=models.IntegerField(null=True,blank=True)
     def __str__(self):
         return self.product.product_name + " - " + self.user.full_name
-    
+
+class Wishlist(models.Model):
+    product=models.ForeignKey(Product,on_delete=models.CASCADE,null=True,blank=True)
+    user=models.ForeignKey(Register,on_delete=models.CASCADE,null=True,blank=True)
+    added_date=models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.product.product_name + " - " + self.user.full_name
+
+class Billing_address(models.Model):
+    user=models.ForeignKey(Register,on_delete=models.CASCADE,null=True,blank=True)
+    first_name=models.CharField(max_length=100)
+    last_name=models.CharField(max_length=100)
+    email_id=models.EmailField()
+    phone_no=models.IntegerField(max_length=10)
+    address_l1=models.TextField()
+    address_l2=models.TextField()
+    city=models.CharField(max_length=100)
+    state=models.CharField(max_length=100)
+    country=models.CharField(max_length=100)
+    zip_code=models.IntegerField(max_length=10)
+    bill_amount=models.IntegerField(null=True,blank=True)
+    def __str__(self):
+        return self.first_name + " " + self.last_name
+
+class Discount(models.Model):
+    min_amount=models.IntegerField(null=True,blank=True)
+    max_amount=models.IntegerField(null=True,blank=True)
+    discount_percentage=models.IntegerField(null=True,blank=True)
+    def __str__(self):
+        return self.min_amount.__str__() + " Rs. - " + self.max_amount.__str__() + " Rs. : " + self.discount_percentage.__str__() + " %"
+
+class Order(models.Model):
+    user=models.ForeignKey(Register,on_delete=models.CASCADE,null=True,blank=True)
+    cart=models.ForeignKey(Cart,on_delete=models.CASCADE,null=True,blank=True)
+    billing_address=models.ForeignKey(Billing_address,on_delete=models.CASCADE,null=True,blank=True)
+    order_date=models.DateTimeField(auto_now_add=True)
+    order_status=models.CharField(max_length=100,default='Pending')
+    payment_mode=models.CharField(max_length=100,default='COD')
+    payment_status=models.CharField(max_length=100,default='Pending')
+    def __str__(self):
+        return self.user.full_name + " - " + self.order_status 

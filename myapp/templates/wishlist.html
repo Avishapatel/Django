@@ -180,126 +180,137 @@
     <!-- Page Header Start -->
     <div class="container-fluid bg-secondary">
         <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 200px">
-            <h2 class="font-weight-semi-bold text-uppercase mb-3">Shopping Cart</h2>
+            <h2 class="font-weight-semi-bold text-uppercase mb-3">Wishlist</h2>
             <div class="d-inline-flex">
                 <p class="m-0"><a href="{% url 'index' %}">Home</a></p>
                 <p class="m-0 px-2">-</p>
-                <p class="m-0">Shopping Cart</p>
+                <p class="m-0">My Wishlist</p>
             </div>
         </div>
     </div>
     <!-- Page Header End -->
 
-{% if cart_id.count == 0 %}
+{% if wishlist_id.count == 0 %}
     <div class="container-fluid pt-5">
         <div class="row justify-content-center">
             <div class="col-12 col-md-8 text-center">
                 
                 <div class="empty-cart">
-                    <img src="/media/static/image/empty_cart.jpg" alt="Empty cart" class="empty-cart__img" style="width: 280px; height: auto;display: block;margin: 0 auto 20px;">
-                    <h3 class="empty-cart__text">Your cart is empty.</h3>
-                    <a href="{% url 'shop' %}" class="btn btn-primary empty-cart__btn" style="margin-top: 15px;">Shop Now</a>
+                      <h3 class="empty-cart__text mb-3">Your wishlist is empty</h3>
+                      <p>Save items that you like in your wishlist.<br>
+                      Review them anytime and easily <br> move them to bag.</p>
+                    
+                    <a href="{% url 'shop' %}" class="btn btn-primary empty-cart__btn" style="margin-top: 10px;">Shop Now</a>
                 </div>
             </div>
         </div>
     </div>
 {% else %}
-    <!-- Cart Start -->
-    <div class="container-fluid pt-5">
-        <div class="row px-xl-5">
-            <div class="col-lg-8 table-responsive mb-5">
-                <table class="table table-bordered text-center mb-0">
-                    <thead class="bg-secondary text-dark">
-                        <tr>
-                            <th colspan="2">Products</th>
-                            <th>Price</th>
-                            <th>Quantity</th>
-                            <th>Total</th>
-                            <th>Remove</th>
-                        </tr>
-                    </thead>
-                    {% for item in cart_id %}
-                    <tbody class="align-middle">
-                        <tr>
-                            <td class="align-middle"><img src="{{item.image.url}}" alt="" style="width: 50px;"></td>
-                            <td class="align-middle">{{item.name}}</td>
-                            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-                            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/fontawesome.min.css" integrity="sha512-M5Kq4YVQrjg5c2wsZSn27Dkfm/2ALfxmun0vUE3mPiJyK53hQBHYCVAtvMYEC7ZXmYLg8DVG4tF8gD27WmDbsg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-                            <td class="align-middle"><i class="fa-solid fa-indian-rupee-sign"></i>{{item.price}}</td>
-                            <td class="align-middle">
-                                <div class="input-group quantity mx-auto" style="width: 100px;">
-                                    <form method="post" action="{% url 'minus_cart' %}?product_id={{item.product.id}}">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="product_id" value="{{item.product.id}}">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-minus" >
-                                        <i class="fa fa-minus"></i>
-                                        </button>
-                                    </form>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm bg-secondary text-center" value="{{item.quantity}}">
-                                    <form method="post" action="{% url 'plus_cart' %}?product_id={{item.product.id}}">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="product_id" value="{{item.product.id}}">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-plus">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
-                                    </form>
-                                </div>
-                            </td>
-                            <td class="align-middle"><i class="fa-solid fa-indian-rupee-sign"></i>{{item.total_price}}</td>
-                            <form method="post" action="{% url 'remove_cart' %}?product_id={{item.product.id}}">
-                                {% csrf_token %}
-                                <input type="hidden" name="product_id" value="{{item.product.id}}">
-                            <td class="align-middle"><button class="btn btn-sm btn-primary"><i class="fa fa-times"></i></button></td>
-                            </form>
-                        </tr>
-                        {% endfor %}
-                        
-                    </tbody>
-                </table>
+<div class="container-fluid pt-5">
+  <div class="row px-xl-5 pb-3">
+    {% for item in page_obj %}
+      <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+        <div class="card product-item border-0 mb-4">
+          <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0" style="height: 300px;">
+            <img class="img-fluid w-100" src="{{ item.product.product_img.url }}" alt="{{ item.product.product_name }}">
+            <!-- Remove button (top-right overlay) -->
+            <form method="post" action="{% url 'remove_wishlist' %}?product_id={{ item.product.id }}" class="position-absolute" style="top:10px; right:10px; z-index:10;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-danger p-1" title="Remove" style="border-radius:50%; width:30px; height:30px;">
+                <i class="fa fa-times" aria-hidden="true" style="line-height:1; color:#fff;"></i>
+              </button>
+            </form>
+          </div>
+          <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+            <h6 class="text-truncate mb-3">{{ item.product.product_name }}</h6>
+            <div class="d-flex justify-content-center">
+              <h6><i class="fa-solid fa-indian-rupee-sign"></i>{{ item.product.product_price }}</h6>
             </div>
-            <div class="col-lg-4">
-                <form class="mb-5" action="">
-                    <div class="input-group">
-                        <input type="text" class="form-control p-4" placeholder="Coupon Code">
-                        <div class="input-group-append">
-                            <button class="btn btn-primary">Apply Coupon</button>
-                        </div>
-                    </div>
-                </form>
-                <div class="card border-secondary mb-5">
-                    <div class="card-header bg-secondary border-0">
-                        <h4 class="font-weight-semi-bold m-0">Cart Summary</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between mb-3 pt-1">
-                            <h6 class="font-weight-medium">Subtotal</h6>
-                            <h6 class="font-weight-medium"><i class="fa-solid fa-indian-rupee-sign"></i>{{total_amount}}</h6>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <h6 class="font-weight-medium">Shipping</h6>
-                            <h6 class="font-weight-medium"><i class="fa-solid fa-indian-rupee-sign"></i>{{shipping_amount}}</h6>
-                        </div>
-                    </div>
-                    <div class="card-footer border-secondary bg-transparent">
-                        <div class="d-flex justify-content-between mt-2">
-                            <h5 class="font-weight-bold">Total</h5>
-                            <h5 class="font-weight-bold"><i class="fa-solid fa-indian-rupee-sign"></i>{{final_total_amount}}</h5>
-                        </div>
-                        <form method="post" action="{% url 'checkout' %}">
-                            {% csrf_token %}
-                        <button class="btn btn-block btn-primary my-3 py-3" type="submit">Proceed To Checkout</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+          </div>
+          <div class="card-footer d-flex bg-light border p-1" style="flex-wrap: nowrap;">
+            <a href="{% url 'view_details' %}?product_id={{ item.product.id }}" class="btn btn-sm btn-outline-dark text-center custom-btn mr-1 w-50">
+              <i class="fas fa-eye text-primary mr-1"></i><span class="btn-text">View Detail</span>
+            </a>
+            {% if item.product.id in cart_product_ids %}
+                                    <a href="{% url 'cart' %}"
+                                    class="btn btn-sm btn-outline-dark text-center custom-btn w-50" style="background-color:#D09C97; color: white;">
+                                        <i class="fa-solid fa-bag-shopping mr-1"></i>
+                                        <span class="btn-text">Go to Bag</span>
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'add_to_cart' %}?product_id={{item.product.id}}"
+                                    class="btn btn-sm btn-outline-dark text-center custom-btn w-50">
+                                        <i class="fas fa-shopping-cart text-primary mr-1"></i>
+                                        <span class="btn-text">Add To Cart</span>
+                                    </a>
+                                {% endif %}
+
+          </div>
         </div>
-    </div>
-    <!-- Cart End -->
+      </div>
+    {% endfor %}
+  </div>
+</div>
 {% endif %}
+
+
+  <!-- Start Paginator code -->
+                                    <style>
+                                        .pages{
+                                            margin-top: 7px;
+                                            color: blue;
+                                        }
+                                        .pages a{
+                                                font-size: 18px;
+                                        }
+                                    </style>
+                    <div class="pagination-area" style="margin:15px 0; text-align:center;">
+                        <ul style="list-style:none; display:inline-flex; gap:13px; padding:0;">
+
+                            {# FIRST + PREVIOUS (not on page 1) #}
+                            {% if page_obj.has_previous %}
+                                <li class="pages">
+                                <a href="?page=1{% if query_string %}&{{ query_string }}{% endif %}">First</a>
+                                </li>
+                                <li class="pages">
+                                <a href="?page={{ page_obj.previous_page_number }}{% if query_string %}&{{ query_string }}{% endif %}">Previous</a>
+                                </li>
+                            {% endif %}
+
+                            {# PAGE NUMBERS #}
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %}
+                                    
+                                    {% if page_obj.number == num %}
+                                        <li  class="pages" style="
+                                            font-weight:bold; 
+                                            padding:5px 12px; 
+                                            border:1px solid blue;
+                                            background:#f2f2f2;">
+                                            {{ num }} 
+                                        </li>
+                                    {% else %}
+                                        <li class="pages">
+                                            <a href="?page={{ num }}{% if query_string %}&{{ query_string }}{% endif %}">{{ num }}</a>
+                                        </li>
+                                    {% endif %}
+
+                                {% endif %}
+                            {% endfor %}
+
+                            {# NEXT + LAST (not on last page) #}
+                            {% if page_obj.has_next %}
+                                <li class="pages">
+                                <a href="?page={{ page_obj.next_page_number }}{% if query_string %}&{{ query_string }}{% endif %}">Next</a>
+                                </li>
+                                <li class="pages">
+                                <a href="?page={{ page_obj.paginator.num_pages }}{% if query_string %}&{{ query_string }}{% endif %}">Last</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+ <!-- End Paginator code -->
+
 {% endblock %}
     <!-- Footer Start -->
     <div class="container-fluid bg-secondary text-dark mt-5 pt-5">
@@ -323,7 +334,7 @@
                             <a class="text-dark mb-2" href="detail.html"><i class="fa fa-angle-right mr-2"></i>Shop Detail</a>
                             <a class="text-dark mb-2" href="cart.html"><i class="fa fa-angle-right mr-2"></i>Shopping Cart</a>
                             <a class="text-dark mb-2" href="checkout.html"><i class="fa fa-angle-right mr-2"></i>Checkout</a>
-                            <a class="text-dark" href="contact.html"><i class="fa fa-angle-right mr-2"></i>Contact Us</a>
+                            <a class="text-dark mb-2" href="contact.html"><i class="fa fa-angle-right mr-2"></i>Contact Us</a>
                         </div>
                     </div>
                     <div class="col-md-4 mb-5">

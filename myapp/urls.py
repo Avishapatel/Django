@@ -44,5 +44,10 @@ urlpatterns = [
     path("latest_products", views.latest_products, name="latest_products"),
     path("popular_products", views.popular_products, name="popular_products"),
     path("best_rated_products", views.best_rated_products, name="best_rated_products"),
+    path("add_billing_address", views.add_billing_address, name="add_billing_address"),
+    path("Order", views.Order, name="Order"),
+    path("wishlist", views.wishlist, name="wishlist"),
+    path("add_wishlist", views.add_wishlist, name="add_wishlist"),
+    path("remove_wishlist", views.remove_wishlist, name="remove_wishlist"),
 
 ]
