@@ -566,8 +566,7 @@ def add_to_cart(request):
     )
     return redirect(f'/cart?product_id={product_id}')
 
-<<<<<<< HEAD
-=======
+
 def plus_cart(request):
     if request.method == 'POST':
         product_id = request.GET['product_id']
@@ -620,4 +619,3 @@ def remove_cart(request):
         return redirect('cart')
        
     return render(request,'cart.html')
->>>>>>> a5610e4afbf021f98f8450ec0aee2163e17183db
