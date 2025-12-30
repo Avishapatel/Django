@@ -43,6 +43,8 @@ class Product(models.Model):
         return self.product_name
     
 class Register(models.Model):
+    user_img=models.ImageField(upload_to='static/image/',null=True,blank=True)
+    otp=models.IntegerField(null=True,blank=True)
     full_name=models.CharField(max_length=100)
     email_id=models.EmailField()
     phone_no=models.CharField(max_length=10)

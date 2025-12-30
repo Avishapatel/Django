@@ -140,13 +140,14 @@
                                 <div class="dropdown-menu rounded-0 m-0">
                                     <a href="{% url 'cart' %}" class="dropdown-item">Shopping Cart</a>
                                     <a href="{% url 'checkout' %}" class="dropdown-item">Checkout</a>
+                                    <a href="{% url 'wishlist' %}"class="dropdown-item">Wishlist</a>
                                 </div>
                             </div>
                             <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>
                         </div>
                        <div class="navbar-nav ml-auto py-0">
                             {% if request.session.user_name %}
-                                <span class="nav-link">Hi, {{ request.session.user_name }}</span>
+                                <a href="{% url 'profile' %}" class="nav-item nav-link">Hi, {{ request.session.user_name }}</a>
                                 <a href="{% url 'logout' %}" class="nav-item nav-link">Logout</a>  <!-- <-- use logout URL -->
                             {% else %}
                                 <a href="{% url 'login' %}" class="nav-item nav-link">Login</a>

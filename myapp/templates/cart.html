@@ -136,13 +136,14 @@
                                 <div class="dropdown-menu rounded-0 m-0">
                                     <a href="{% url 'cart' %}" class="dropdown-item">Shopping Cart</a>
                                     <a href="{% url 'checkout' %}" class="dropdown-item">Checkout</a>
+                                    <a href="{% url 'wishlist' %}"class="dropdown-item">Wishlist</a>
                                 </div>
                             </div>
                             <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0">
                             {% if request.session.user_name %}
-                                <span class="nav-link">Hi, {{ request.session.user_name }}</span>
+                                <a href="{% url 'profile' %}" class="nav-item nav-link">Hi, {{ request.session.user_name }}</a>
                                 <a href="{% url 'logout' %}" class="nav-item nav-link">Logout</a>  <!-- <-- use logout URL -->
                             {% else %}
                                 <a href="{% url 'login' %}" class="nav-item nav-link">Login</a>
@@ -225,7 +226,7 @@
                             <td class="align-middle">{{item.name}}</td>
                             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
                             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/fontawesome.min.css" integrity="sha512-M5Kq4YVQrjg5c2wsZSn27Dkfm/2ALfxmun0vUE3mPiJyK53hQBHYCVAtvMYEC7ZXmYLg8DVG4tF8gD27WmDbsg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-                            <td class="align-middle"><i class="fa-solid fa-indian-rupee-sign"></i>{{item.price}}</td>
+                            <td class="align-middle text-nowrap"><i class="fa-solid fa-indian-rupee-sign"></i>{{item.price}}</td>
                             <td class="align-middle">
                                 <div class="input-group quantity mx-auto" style="width: 100px;">
                                     <form method="post" action="{% url 'minus_cart' %}?product_id={{item.product.id}}">
@@ -249,7 +250,7 @@
                                     </form>
                                 </div>
                             </td>
-                            <td class="align-middle"><i class="fa-solid fa-indian-rupee-sign"></i>{{item.total_price}}</td>
+                            <td class="align-middle text-nowrap"><i class="fa-solid fa-indian-rupee-sign"></i>{{item.total_price}}</td>
                             <form method="post" action="{% url 'remove_cart' %}?product_id={{item.product.id}}">
                                 {% csrf_token %}
                                 <input type="hidden" name="product_id" value="{{item.product.id}}">

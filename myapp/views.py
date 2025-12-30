@@ -5,14 +5,15 @@ from django.db.models.functions import Random
 from itertools import zip_longest 
 from django.contrib import messages
 from django.core.paginator import Paginator
-
+import random
+from django.core.mail import send_mail
 
 # Create your views here.
 def home(request):
     return HttpResponse("hello")
 
 def index(request):
-
+    
     if "email_id" in request.session or "user_name" in request.session:  
         user_name=Register.objects.get(email_id=request.session['email_id'])
         c_id = Main_category.objects.annotate(product_count=Count('product'))
@@ -77,6 +78,7 @@ def cart(request):
             contaxt={'c_id':c_id,
                     'user_name':user_name,
                     'selected_product':selected_product,
+                    'wishlist_id':Wishlist.objects.filter(user=user_name),
                     'cart_id':cart_id,
                     'total_amount':total_amount,
                     'shipping_amount':shipping_amount,
@@ -137,14 +139,7 @@ def checkout(request):
         else:
             first_name = last_name = email_id = phone_no = address_l1 = address_l2 = country = city = state = zip_code = ""
 
-        # total_amount=0
-        # for i in cart_id:
-        #     total_amount=i.total_price + total_amount if 'total_amount' in locals() else i.total_price
-        # if total_amount >=999:
-        #     shipping_amount=50
-        # else:
-        #     shipping_amount=0
-
+       
         total_amount=0
         for i in cart_id:
             total_amount=i.total_price + total_amount if 'total_amount' in locals() else i.total_price
@@ -581,6 +576,161 @@ def logout_view(request):
     messages.success(request, "Logged out successfully!")
     return redirect('login')
 
+def forgot_password(request):
+    return render(request,'forgot.html')
+
+def send_otp(request):
+    if request.POST:
+        email_id = request.POST.get('email_id', '').strip()
+        user=Register.objects.get(email_id=email_id)
+       
+        print("user",user)
+        try:
+            otp=random.randint(100000,999999)
+            
+            # Save OTP in profile
+            user.otp = otp
+            user.save()
+            print(type(user.otp))
+            print("send user-otp",user.otp)
+
+
+            # Send OTP via email
+            send_mail(
+                'Your OTP for Password Reset',
+                f'Your OTP is {otp}',
+                'avishapatel.pif@gmail.com',  # settings.py EMAIL_HOST_USER
+                [email_id],
+                fail_silently=False,
+            )
+
+            # request.session['reset_user'] = user.id
+            return render(request,'reset_password.html',{'email_id':email_id})  # redirect to reset password page
+        except user.DoesNotExist:
+            return render(request, 'forgot.html', {'error': 'Email not found'})
+    return render(request, 'forgot.html')
+        
+
+
+def reset_password(request):
+    if request.method == "POST":
+        email_id = request.POST.get('email_id')
+        otp = request.POST.get('otp')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        print("hello data",email_id,otp,new_password,confirm_password)
+        print(type(otp))
+        try:
+            user = Register.objects.get(email_id=email_id)
+        except Register.DoesNotExist:
+            return render(request, 'reset_password.html', {'alert': 'User not found'})
+
+        print("reset user otp",user.otp)
+        print(type(user.otp))
+        if user.otp != int(otp):
+            return render(request, 'reset_password.html', {
+                'alert': 'Invalid OTP',
+                'email_id': email_id
+            })
+
+        if new_password != confirm_password:
+            return render(request, 'reset_password.html', {
+                'alert': 'Passwords do not match',
+                'email_id': email_id
+            })
+
+        # Password reset
+        user.password = new_password
+        user.confirm_password = confirm_password
+        user.otp = None
+        user.save()
+        print("data",user.full_name,user.otp,user.email_id)
+
+        return redirect('login')
+
+    return render(request, 'reset_password.html')
+
+        
+
+
+
+def profile(request):
+    if 'email_id' in request.session or 'user_name' in request.session:
+        user_name=Register.objects.get(email_id=request.session['email_id'])
+        c_id=Main_category.objects.all()
+        cart_id=Cart.objects.filter(user=user_name)
+        contaxt={'c_id':c_id,'cart_id':cart_id,'user_name':user_name,'wishlist_id':Wishlist.objects.filter(user=user_name),}
+        return render(request,'profile.html',contaxt)
+    else:
+        return render(request,'login.html')
+    
+def update_profile(request):
+    if 'email_id' in request.session or 'user_name' in request.session:
+        user_name=Register.objects.get(email_id=request.session['email_id'])
+        if request.method == "POST":
+            full_name = request.POST.get('full_name', '').strip()
+            phone_no = request.POST.get('phone_no', '').strip()
+            action_type = request.POST.get('action_type', '')
+            old_password = request.POST.get('old_password', '')
+            new_password = request.POST.get('new_password', '')
+            confirm_password = request.POST.get('confirm_password', '')
+            user_img=request.FILES.get('user_img')
+            print("img",user_img)
+            if action_type == 'change_password':
+                
+                if not all([full_name,phone_no,old_password, new_password, confirm_password]):
+                    return render(request, 'profile.html', {'alert': 'Please fill all fields.', "c_id": Main_category.objects.all(),
+                                'user_name':user_name,'wishlist_id':Wishlist.objects.filter(user=user_name),
+                                'cart_id':Cart.objects.filter(user=user_name)})
+               
+                if old_password != user_name.password:
+                    
+                    return render(request, 'profile.html', {'alert': 'Old password is incorrect.', "c_id": Main_category.objects.all(),'user_name':user_name,'wishlist_id':Wishlist.objects.filter(user=user_name),
+                                'cart_id':Cart.objects.filter(user=user_name)})
+                if new_password != confirm_password:
+                    return render(request, 'profile.html', {'alert': 'New passwords do not match.', "c_id": Main_category.objects.all(),'user_name':user_name,'wishlist_id':Wishlist.objects.filter(user=user_name),
+                                'cart_id':Cart.objects.filter(user=user_name)})
+                user_name.full_name = full_name
+                user_name.phone_no = phone_no
+                user_name.password = new_password
+                user_name.confirm_password = confirm_password
+                user_name.save()
+                request.session['user_name'] =  user_name.full_name
+                messages.success(request, "Password changed successfully!")
+                return redirect('profile')  
+            
+            else:
+                   
+                    if not all([full_name, phone_no]):
+                        return render(request, 'profile.html', {'alert': 'Please fill all fields.', "c_id": Main_category.objects.all(),'user_name':user_name,'wishlist_id':Wishlist.objects.filter(user=user_name),
+                                'cart_id':Cart.objects.filter(user=user_name)})
+                    user_name.full_name = full_name
+                    user_name.phone_no = phone_no
+                    user_name.save()
+                    request.session['user_name'] =  user_name.full_name
+                    messages.success(request, "Profile updated successfully!")
+                    return redirect('profile')  
+    else:
+        return render(request,'login.html')
+    
+def upload_profile_image(request):
+    if 'email_id' in request.session or 'user_name' in request.session:
+        if request.method == "POST" and request.FILES.get('user_img'):
+            user = Register.objects.get(email_id=request.session['email_id'])
+            img = request.FILES['user_img']
+            # simple validation
+            if not img.content_type.startswith('image/'):
+                messages.error(request, "Please upload a valid image file.")
+                return redirect('profile')
+            user.user_img = img
+            user.save()
+            messages.success(request, "Profile image updated successfully!")
+            return redirect('profile')
+        messages.error(request, "No image selected.")
+        return redirect('profile')
+    return render(request, 'login.html')
+
+
 def latest_products(request):
     # Display products ordered by latest (assuming 'id' indicates order of addition)
     if 'email_id' in request.session or 'user_name' in request.session:
@@ -745,10 +895,6 @@ def add_to_cart(request):
     )
     return redirect(f'/cart?product_id={product_id}')
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 4fcbd9c43abcadc60927747b1225710ff25f71d8
 def plus_cart(request):
     if request.method == 'POST':
         product_id = request.GET['product_id']
@@ -794,8 +940,6 @@ def remove_cart(request):
         return redirect('cart')
        
     return render(request,'cart.html')
-<<<<<<< HEAD
-=======
 
 def add_wishlist(request):
      if 'email_id' in request.session or 'user_name' in request.session:
@@ -869,4 +1013,3 @@ def add_billing_address(request):
         return redirect('checkout')
     return render(request, 'checkout.html')
 
->>>>>>> 4fcbd9c43abcadc60927747b1225710ff25f71d8

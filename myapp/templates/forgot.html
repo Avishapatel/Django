@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Forgot Password - EShopper</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"> 
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Bootstrap / Custom CSS -->
+    <link href="static/css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container-fluid pt-5 mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+
+                    <h3 class="mb-3 text-center">Forgot Password</h3>
+                   
+                    {% if alert %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        {{ alert }}
+                        <button type="button" class="close" data-dismiss="alert">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'send_otp' %}">
+                        {% csrf_token %}
+
+                        <div class="form-group">
+                            <label class="mt-2">Email Address</label>
+                            <input type="email"
+                                   name="email_id"
+                                   required
+                                   class="form-control form-control-lg" style="margin-top: 10px;">
+                        </div>
+
+                        <button type="submit"
+                                class="btn btn-primary btn-block btn-lg mb-3">
+                            Send OTP
+                        </button>
+                    </form>
+
+                    <p class="mb-0 text-center">
+                        Remember your password?
+                        <a href="{% url 'login' %}">Log In</a>
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

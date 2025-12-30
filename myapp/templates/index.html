@@ -26,6 +26,7 @@
 
     <!-- Customized Bootstrap Stylesheet -->
     <link href="static/css/style.css" rel="stylesheet">
+    
 
      <style>
         .custom-btn {
@@ -179,13 +180,14 @@
                                 <div class="dropdown-menu rounded-0 m-0">
                                     <a href="{% url 'cart' %}"class="dropdown-item">Shopping Cart</a>
                                     <a href="{% url 'checkout' %}"class="dropdown-item">Checkout</a>
+                                    <a href="{% url 'wishlist' %}"class="dropdown-item">Wishlist</a>
                                 </div>
                             </div>
                             <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>
                         </div>
-                        <div class="navbar-nav ml-auto py-0">
+                        <div class="navbar-nav ml-auto py-0"> 
                             {% if request.session.user_name %}
-                                <span class="nav-link">Hi, {{ request.session.user_name }}</span>
+                                <a href="{% url 'profile' %}" class="nav-item nav-link">Hi, {{ request.session.user_name }}</a>
                                 <a href="{% url 'logout' %}" class="nav-item nav-link">Logout</a>  <!-- <-- use logout URL -->
                             {% else %}
                                 <a href="{% url 'login' %}" class="nav-item nav-link">Login</a>
@@ -293,22 +295,34 @@
 
 
     <!-- Categories Start -->
-    <div class="container-fluid pt-5">
-        <div class="row px-xl-5 pb-3">
-            {% for i in c_id %}
-            <div class="col-lg-4 col-md-6 pb-1">
-                <div class="cat-item d-flex flex-column border mb-4" style="padding: 30px;">
-                    <p class="text-right">{{ i.product_count }} products</p>
-                    <a href="{% url 'shop' %}?cat_id={{i.id}}" class="cat-img position-relative overflow-hidden mb-3">
-                        
-                            <img class="img-fluid" src="{{ i.random_product.product_img.url }}" alt="{{ i.random_product.product_name }}">
-                        
-                    </a>
-                    <h5 class="font-weight-semi-bold m-0">{{ i.cat_name }}</h5>
-                </div>
+    
+<div class="container-fluid pt-5">
+    <div class="row px-xl-5 pb-3">
+
+        {% for i in c_id %}
+        <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+            <div class="cat-item d-flex flex-column border mb-4 p-4">
+
+                <p class="text-right">{{ i.product_count }} products</p>
+
+                <a href="{% url 'shop' %}?cat_id={{ i.id }}"
+                   class="cat-img position-relative mb-3">
+
+                    <img class="img-fluid"
+                         src="{{ i.random_product.product_img.url }}"
+                         alt="{{ i.random_product.product_name }}"
+                         style="width:100%; height:200px; object-fit:contain;">
+
+                </a>
+
+                <h5 class="font-weight-semi-bold m-0">
+                    {{ i.cat_name }}
+                </h5>
+
             </div>
         </div>
         {% endfor %}
+
     </div>
 </div>
 
@@ -346,32 +360,39 @@
 
     <!-- Products Start -->
     <div class="container-fluid pt-5">
-        <div class="text-center mb-4">
+        <div class="text-center mb-5">
             <h2 class="section-title px-5"><span class="px-2">Trandy Products</span></h2>
         </div>
-        <div class="row px-xl-5 pb-3">
-            {% for i in trandy_product %}
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                <div class="card product-item border-0 mb-4">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                       <img class="img-fluid w-100" src="{{i.product_img.url}}" alt="">
-                    </div>
-                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                        <h6 class="text-truncate mb-3">{{i.product_name}}</h6>
-                        <div class="d-flex justify-content-center">
-                            <h6><i class="fa-solid fa-indian-rupee-sign"></i>{{i.product_price}}</h6><h6 class="text-muted ml-2"></h6>
-                        </div>
-                    </div>
-                    <!-- <div class="card-footer d-flex justify-content-between bg-light border">
-                         <a href="{% url 'view_details' %}?product_id={{i.id}}" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
-                                {% if i.id in cart_product_ids %}
-                                    <a href="{% url 'cart' %}" class="btn btn-sm text-dark p-0"><i class="fa-duotone fa-solid fa-bag-shopping text-primary mr-1"></i>Go to Bag</a>
-                                {% else %}
-                                <a href="{% url 'add_to_cart' %}?product_id={{i.id}}" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
-                                {% endif %}
-                    </div> -->
+      <div class="row px-xl-5 pb-3">
+    {% for i in trandy_product %}
+    <div class="col-lg-3 col-md-6 col-sm-12 mb-5">
+        <div class="card product-item border-0 mb-4 d-flex flex-column" style="height:100%;">
 
-                     <div class="card-footer d-flex bg-light border p-1" style="flex-wrap: nowrap;">
+            <!-- IMAGE -->
+            <div class="card-header product-img position-relative bg-transparent border p-0"
+                 style="height:220px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+                
+                <img class="img-fluid"
+                     src="{{i.product_img.url}}"
+                     alt="{{ i.product_name }}"
+                     style="max-height:100%; width:100%; object-fit:contain;">
+            </div>
+
+            <!-- BODY -->
+            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3"
+                 style="flex-grow:1;">
+                
+                <h6 class="text-truncate mb-3 px-2">{{i.product_name}}</h6>
+
+                <div class="d-flex justify-content-center">
+                    <h6>
+                        <i class="fa-solid fa-indian-rupee-sign"></i>{{i.product_price}}
+                    </h6>
+                </div>
+            </div>
+
+            <!-- FOOTER -->
+             <div class="card-footer d-flex bg-light border p-1" style="flex-wrap: nowrap;">
 
                                 <a href="{% url 'view_details' %}?product_id={{i.id}}"
                                 class="btn btn-sm btn-outline-dark text-center custom-btn mr-1 w-50">
@@ -394,12 +415,11 @@
                                 {% endif %}
 
                     </div>
-
-                </div>
-            </div>
-            {% endfor %}
-           
         </div>
+    </div>
+    {% endfor %}
+</div>
+
     </div>
     <!-- Products End -->
 
@@ -428,22 +448,27 @@
 
     <!-- Products Start -->
     <div class="container-fluid pt-5">
-        <div class="text-center mb-4">
+        <div class="text-center mb-5">
             <h2 class="section-title px-5"><span class="px-2">Just Arrived</span></h2>
         </div>
         <div class="row px-xl-5 pb-3">
             {% for i in just_arrived_product %}
-            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+            <div class="col-lg-3 col-md-6 col-sm-12 mb-5">
                 <div class="card product-item border-0 mb-4">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                        <img class="img-fluid w-100" src="{{i.product_img.url}}" alt="">
+                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0"
+                    style="height:220px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+                        <img class="img-fluid" src="{{i.product_img.url}}" alt="{{ i.product_name }}"
+                     style="max-height:100%; width:100%; object-fit:contain;">
+
                     </div>
                     <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                        <h6 class="text-truncate mb-3">{{i.product_name}}</h6>
+                        <h6 class="text-truncate mb-3 px-2">{{i.product_name}}</h6>
                         <div class="d-flex justify-content-center">
                             <h6><i class="fa-solid fa-indian-rupee-sign"></i>{{i.product_price}}</h6><h6 class="text-muted ml-2"></h6>
                         </div>
                     </div>
+
+                    
                    
                     <div class="card-footer d-flex bg-light border p-1" style="flex-wrap: nowrap;">
 
@@ -479,38 +504,102 @@
 
 
     <!-- Vendor Start -->
-    <div class="container-fluid py-5">
-        <div class="row px-xl-5">
-            <div class="col">
-                <div class="owl-carousel vendor-carousel">
-                    <div class="vendor-item border p-4">
-                        <img src="static/img/vendor-1.jpg" alt="">
-                    </div>
-                    <div class="vendor-item border p-4">
-                        <img src="static/img/vendor-2.jpg" alt="">
-                    </div>
-                    <div class="vendor-item border p-4">
-                        <img src="static/img/vendor-3.jpg" alt="">
-                    </div>
-                    <div class="vendor-item border p-4">
-                        <img src="static/img/vendor-4.jpg" alt="">
-                    </div>
-                    <div class="vendor-item border p-4">
-                        <img src="static/img/vendor-5.jpg" alt="">
-                    </div>
-                    <div class="vendor-item border p-4">
-                        <img src="static/img/vendor-6.jpg" alt="">
-                    </div>
-                    <div class="vendor-item border p-4">
-                        <img src="static/img/vendor-7.jpg" alt="">
-                    </div>
-                    <div class="vendor-item border p-4">
-                        <img src="static/img/vendor-8.jpg" alt="">
-                    </div>
-                </div>
-            </div>
+<div class="container-fluid py-5">
+  <div class="row px-xl-5">
+    <div class="col">
+
+      <style>
+        .vendor-carousel {
+          display: flex;
+          gap: 20px;
+          overflow: hidden;
+          white-space: nowrap;
+        }
+
+        .vendor-track {
+          display: flex;
+          gap: 20px;
+          animation: scroll 20s linear infinite;
+        }
+
+        .vendor-item {
+          flex: 0 0 auto;
+          width: 180px;
+          height: 120px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #fff;
+        }
+
+        .vendor-item img {
+          max-width: 100%;
+          max-height: 80px;
+          object-fit: contain;
+        }
+
+        @keyframes scroll {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+      </style>
+
+      <div class="vendor-carousel">
+        <div class="vendor-track">
+
+          <div class="vendor-item border p-4">
+            <img src="static/img/vendor-1.jpg" alt="">
+          </div>
+
+          <div class="vendor-item border p-4">
+            <img src="static/img/vendor-2.jpg" alt="">
+          </div>
+
+          <div class="vendor-item border p-4">
+            <img src="static/img/vendor-3.jpg" alt="">
+          </div>
+
+          <div class="vendor-item border p-4">
+            <img src="static/img/vendor-4.jpg" alt="">
+          </div>
+
+          <div class="vendor-item border p-4">
+            <img src="static/img/vendor-5.jpg" alt="">
+          </div>
+
+          <div class="vendor-item border p-4">
+            <img src="static/img/vendor-6.jpg" alt="">
+          </div>
+
+          <div class="vendor-item border p-4">
+            <img src="static/img/vendor-7.jpg" alt="">
+          </div>
+
+          <div class="vendor-item border p-4">
+            <img src="static/img/vendor-8.jpg" alt="">
+          </div>
+
+          <!-- duplicate for smooth infinite scroll -->
+          <div class="vendor-item border p-4">
+            <img src="static/img/vendor-1.jpg" alt="">
+          </div>
+
+          <div class="vendor-item border p-4">
+            <img src="static/img/vendor-2.jpg" alt="">
+          </div>
+
         </div>
+      </div>
+
     </div>
+  </div>
+</div>
+
+
     <!-- Vendor End -->
 
 {% endblock %}
