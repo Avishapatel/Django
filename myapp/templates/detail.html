@@ -1,4 +1,5 @@
 {% extends 'index.html' %}
+{% load static %}
 
 
 <!DOCTYPE html>
@@ -245,7 +246,9 @@
                     <small class="pt-1">(50 Reviews)</small>
                 </div>
                 <h3 class="font-weight-semi-bold mb-4"><i class="fa-solid fa-indian-rupee-sign"></i>{{selected_product.product_price}}</h3>
-                <p class="mb-4">Volup erat ipsum diam elitr rebum et dolor. Est nonumy elitr erat diam stet sit clita ea. Sanc invidunt ipsum et, labore clita lorem magna lorem ut. Erat lorem duo dolor no sea nonumy. Accus labore stet, est lorem sit diam sea et justo, amet at lorem et eirmod ipsum diam et rebum kasd rebum.</p>
+                <p class="mb-4">This product offers a clean design and reliable quality.
+It is suitable for daily use and ideal for different occasions.
+Designed to provide comfort, durability, and long-lasting performance.</p>
                 <div class="d-flex mb-3">
                     <p class="text-dark font-weight-medium mb-0 mr-3">Sizes:</p>
                     <form>
@@ -320,60 +323,111 @@
                 <div class="nav nav-tabs justify-content-center border-secondary mb-4">
                     <a class="nav-item nav-link active" data-toggle="tab" href="#tab-pane-1">Description</a>
                     <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-2">Information</a>
-                    <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-3">Reviews (0)</a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-3">Reviews ({{review_id.count}})</a>
                 </div>
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="tab-pane-1">
                         <h4 class="mb-3">Product Description</h4>
-                        <p>Eos no lorem eirmod diam diam, eos elitr et gubergren diam sea. Consetetur vero aliquyam invidunt duo dolores et duo sit. Vero diam ea vero et dolore rebum, dolor rebum eirmod consetetur invidunt sed sed et, lorem duo et eos elitr, sadipscing kasd ipsum rebum diam. Dolore diam stet rebum sed tempor kasd eirmod. Takimata kasd ipsum accusam sadipscing, eos dolores sit no ut diam consetetur duo justo est, sit sanctus diam tempor aliquyam eirmod nonumy rebum dolor accusam, ipsum kasd eos consetetur at sit rebum, diam kasd invidunt tempor lorem, ipsum lorem elitr sanctus eirmod takimata dolor ea invidunt.</p>
-                        <p>Dolore magna est eirmod sanctus dolor, amet diam et eirmod et ipsum. Amet dolore tempor consetetur sed lorem dolor sit lorem tempor. Gubergren amet amet labore sadipscing clita clita diam clita. Sea amet et sed ipsum lorem elitr et, amet et labore voluptua sit rebum. Ea erat sed et diam takimata sed justo. Magna takimata justo et amet magna et.</p>
-                    </div>
+                       <p>
+                        High-quality products designed to meet your everyday needs. Built with premium materials,
+                        modern design, and reliable performance to ensure long-lasting satisfaction. Each item is
+                        crafted with attention to detail to enhance both functionality and style.
+                        </p>
+
+                        <p>
+                        Every product undergoes strict quality checks to guarantee durability, consistency, and
+                        a smooth, reliable user experience. We prioritize performance and usability to make sure
+                        you get the best value.
+                        </p>
+
+                        <p>
+                        Carefully selected to offer the best combination of comfort, practicality, and style.
+                        Perfect for regular use, suitable for all occasions, and designed to complement a
+                        modern lifestyle seamlessly.
+                        </p>
+
+                        <p>
+                        An ideal choice for those who value quality, reliability, and elegant design,
+                        while enjoying excellent performance at an affordable price. Our products are made
+                        to enhance your daily life and provide lasting satisfaction.
+                        </p>
+
+                            </div>
                     <div class="tab-pane fade" id="tab-pane-2">
                         <h4 class="mb-3">Additional Information</h4>
-                        <p>Eos no lorem eirmod diam diam, eos elitr et gubergren diam sea. Consetetur vero aliquyam invidunt duo dolores et duo sit. Vero diam ea vero et dolore rebum, dolor rebum eirmod consetetur invidunt sed sed et, lorem duo et eos elitr, sadipscing kasd ipsum rebum diam. Dolore diam stet rebum sed tempor kasd eirmod. Takimata kasd ipsum accusam sadipscing, eos dolores sit no ut diam consetetur duo justo est, sit sanctus diam tempor aliquyam eirmod nonumy rebum dolor accusam, ipsum kasd eos consetetur at sit rebum, diam kasd invidunt tempor lorem, ipsum lorem elitr sanctus eirmod takimata dolor ea invidunt.</p>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item px-0">
-                                        Sit erat duo lorem duo ea consetetur, et eirmod takimata.
-                                    </li>
-                                    <li class="list-group-item px-0">
-                                        Amet kasd gubergren sit sanctus et lorem eos sadipscing at.
-                                    </li>
-                                    <li class="list-group-item px-0">
-                                        Duo amet accusam eirmod nonumy stet et et stet eirmod.
-                                    </li>
-                                    <li class="list-group-item px-0">
-                                        Takimata ea clita labore amet ipsum erat justo voluptua. Nonumy.
-                                    </li>
-                                  </ul> 
-                            </div>
-                            <div class="col-md-6">
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item px-0">
-                                        Sit erat duo lorem duo ea consetetur, et eirmod takimata.
-                                    </li>
-                                    <li class="list-group-item px-0">
-                                        Amet kasd gubergren sit sanctus et lorem eos sadipscing at.
-                                    </li>
-                                    <li class="list-group-item px-0">
-                                        Duo amet accusam eirmod nonumy stet et et stet eirmod.
-                                    </li>
-                                    <li class="list-group-item px-0">
-                                        Takimata ea clita labore amet ipsum erat justo voluptua. Nonumy.
-                                    </li>
-                                  </ul> 
-                            </div>
+                       <p>
+                                Discover high-quality products designed to meet your everyday needs. Crafted with
+                                premium materials and modern design, each item delivers reliable performance and
+                                long-lasting satisfaction.
+                                </p>
+
+                                <p>
+                                Each product undergoes strict quality checks to ensure durability, functionality,
+                                and a smooth, reliable user experience. Designed to complement modern lifestyles
+                                with ease and convenience.
+                                </p>
+
+                                <p>
+                                Perfect for enhancing your lifestyle with comfort, style, and functionality. An ideal
+                                choice for those who value quality, reliability, and elegant design at an affordable price.
+                                </p>
+
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item px-0">
+                                                Durable construction with high-quality materials.
+                                            </li>
+                                            <li class="list-group-item px-0">
+                                                Elegant and modern design suitable for all occasions.
+                                            </li>
+                                            <li class="list-group-item px-0">
+                                                Comfortable and user-friendly for daily use.
+                                            </li>
+                                            <li class="list-group-item px-0">
+                                                Strict quality checks to ensure long-lasting performance.
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item px-0">
+                                                Versatile and practical for home, office, or travel.
+                                            </li>
+                                            <li class="list-group-item px-0">
+                                                Offers excellent value for money.
+                                            </li>
+                                            <li class="list-group-item px-0">
+                                                Lightweight and easy to handle.
+                                            </li>
+                                            <li class="list-group-item px-0">
+                                                Designed to complement a modern lifestyle seamlessly.
+                                            </li>
+                                        </ul>
+                                    </div>
+
+
                         </div>
                     </div>
+                    
                     <div class="tab-pane fade" id="tab-pane-3">
                         <div class="row">
+                            
                             <div class="col-md-6">
-                                <h4 class="mb-4">1 review for "Colorful Stylish Shirt"</h4>
+                                <h4 class="mb-4">{{review_id.count}} review for "{{selected_product.product_name}}"</h4>
+                                {% for review in review_id %}
                                 <div class="media mb-4">
-                                    <img src="static/img/user.jpg" alt="Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
+
+                                    {% if review.register_user.user_img %}
+                                        <img src="{{review.register_user.user_img.url}}" alt="Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
+                                    {% else %}
+                                        <img src="{% static 'img/cat-1.jpg' %}" alt="Default User Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
+                                    {% endif %}
+
+                                    
                                     <div class="media-body">
-                                        <h6>John Doe<small> - <i>01 Jan 2045</i></small></h6>
+                                        <h6>{{review.register_user.full_name}}<small> - <i>{{review.date}}</i></small></h6>
                                         <div class="text-primary mb-2">
                                             <i class="fas fa-star"></i>
                                             <i class="fas fa-star"></i>
@@ -381,11 +435,11 @@
                                             <i class="fas fa-star-half-alt"></i>
                                             <i class="far fa-star"></i>
                                         </div>
-                                        <p>Diam amet duo labore stet elitr ea clita ipsum, tempor labore accusam ipsum et no at. Kasd diam tempor rebum magna dolores sed sed eirmod ipsum.</p>
-                                    </div>
+                                        <p>{{review.review}}</p> </div>
                                 </div>
+                                {% endfor %}
                             </div>
-
+                            
 
 
 
@@ -521,6 +575,7 @@
                             </div>
                         </div>
                     </div>
+                    
                 </div>
             </div>
         </div>
@@ -531,86 +586,80 @@
     <!-- Products Start -->
     <div class="container-fluid py-5">
         <div class="text-center mb-4">
-            <h2 class="section-title px-5"><span class="px-2">You May Also Like</span></h2>
+            <h2 class="section-title px-5 mb-5"><span class="px-2">You May Also Like</span></h2>
         </div>
         <div class="row px-xl-5">
             <div class="col">
-                <div class="owl-carousel related-carousel">
-                    <div class="card product-item border-0">
-                        <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                            <img class="img-fluid w-100" src="static/img/product-1.jpg" alt="">
+                <div class="owl-carousel related-carousel" style="display: flex; gap: 20px;">
+
+                    <style>
+        .product-carousel {
+          display: flex;
+          gap: 20px;
+          overflow: hidden;
+          white-space: nowrap;
+        }
+
+        .product-track {
+          display: flex;
+          gap: 20px;
+          animation: scroll 40s linear infinite;
+        }
+
+       
+
+        @keyframes scroll {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+      </style>
+
+                    <div class="product-carousel">
+        <div class="product-track">
+                    {% for i in like_product %}
+                    <div class="card product-item border-0" style="width: 270px;">
+                        <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0" 
+                        style="height:220px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+                            <img class="img-fluid w-100" src="{{i.product_img.url}}" alt="" style="max-height:100%; width:100%; object-fit:contain;">
                         </div>
                         <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                            <h6 class="text-truncate mb-3">Colorful Stylish Shirt</h6>
+                            <h6 class="text-truncate mb-3 px-2">{{i.product_name}}</h6>
                             <div class="d-flex justify-content-center">
-                                <h6>$123.00</h6><h6 class="text-muted ml-2"><del>$123.00</del></h6>
+                                <h6><i class="fa-solid fa-indian-rupee-sign"></i>{{i.product_price}}</h6><h6 class="text-muted ml-2"></h6>
                             </div>
                         </div>
-                        <div class="card-footer d-flex justify-content-between bg-light border">
-                            <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
-                            <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
-                        </div>
+                        <div class="card-footer d-flex bg-light border p-1" style="flex-wrap: nowrap;">
+
+                                <a href="{% url 'view_details' %}?product_id={{i.id}}"
+                                class="btn btn-sm btn-outline-dark text-center custom-btn mr-1 w-50">
+                                    <i class="fas fa-eye text-primary mr-1"></i>
+                                    <span class="btn-text">View Detail</span>
+                                </a>
+
+                                {% if i.id in cart_product_ids %}
+                                    <a href="{% url 'cart' %}"
+                                    class="btn btn-sm btn-outline-dark text-center custom-btn w-50" style="background-color:#D09C97; color: white;">
+                                        <i class="fa-solid fa-bag-shopping mr-1"></i>
+                                        <span class="btn-text">Go to Bag</span>
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'add_to_cart' %}?product_id={{i.id}}"
+                                    class="btn btn-sm btn-outline-dark text-center custom-btn w-50">
+                                        <i class="fas fa-shopping-cart text-primary mr-1"></i>
+                                        <span class="btn-text">Add To Cart</span>
+                                    </a>
+                                {% endif %}
+
                     </div>
-                    <div class="card product-item border-0">
-                        <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                            <img class="img-fluid w-100" src="static/img/product-2.jpg" alt="">
-                        </div>
-                        <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                            <h6 class="text-truncate mb-3">Colorful Stylish Shirt</h6>
-                            <div class="d-flex justify-content-center">
-                                <h6>$123.00</h6><h6 class="text-muted ml-2"><del>$123.00</del></h6>
-                            </div>
-                        </div>
-                        <div class="card-footer d-flex justify-content-between bg-light border">
-                            <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
-                            <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
-                        </div>
                     </div>
-                    <div class="card product-item border-0">
-                        <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                            <img class="img-fluid w-100" src="static/img/product-3.jpg" alt="">
-                        </div>
-                        <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                            <h6 class="text-truncate mb-3">Colorful Stylish Shirt</h6>
-                            <div class="d-flex justify-content-center">
-                                <h6>$123.00</h6><h6 class="text-muted ml-2"><del>$123.00</del></h6>
-                            </div>
-                        </div>
-                        <div class="card-footer d-flex justify-content-between bg-light border">
-                            <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
-                            <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
-                        </div>
-                    </div>
-                    <div class="card product-item border-0">
-                        <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                            <img class="img-fluid w-100" src="static/img/product-4.jpg" alt="">
-                        </div>
-                        <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                            <h6 class="text-truncate mb-3">Colorful Stylish Shirt</h6>
-                            <div class="d-flex justify-content-center">
-                                <h6>$123.00</h6><h6 class="text-muted ml-2"><del>$123.00</del></h6>
-                            </div>
-                        </div>
-                        <div class="card-footer d-flex justify-content-between bg-light border">
-                            <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
-                            <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
-                        </div>
-                    </div>
-                    <div class="card product-item border-0">
-                        <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                            <img class="img-fluid w-100" src="static/img/product-5.jpg" alt="">
-                        </div>
-                        <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                            <h6 class="text-truncate mb-3">Colorful Stylish Shirt</h6>
-                            <div class="d-flex justify-content-center">
-                                <h6>$123.00</h6><h6 class="text-muted ml-2"><del>$123.00</del></h6>
-                            </div>
-                        </div>
-                        <div class="card-footer d-flex justify-content-between bg-light border">
-                            <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
-                            <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
-                        </div>
-                    </div>
+                    {% endfor %}
+                   
+                </div>
+                </div>
                 </div>
             </div>
         </div>

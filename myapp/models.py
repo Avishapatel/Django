@@ -119,3 +119,21 @@ class Order(models.Model):
     payment_status=models.CharField(max_length=100,default='Pending')
     def __str__(self):
         return self.user.full_name + " - " + self.order_status 
+
+class coupon_discount(models.Model):
+    user=models.ForeignKey(Register,on_delete=models.CASCADE,null=True,blank=True)
+    coupon_name=models.CharField(max_length=100,null=True,blank=True)
+    discount=models.IntegerField(default=0,null=True,blank=True)
+    active=models.BooleanField(default=True)
+    def __str__(self):
+        return self.coupon_name
+    
+class Contact(models.Model):
+    user=models.ForeignKey(Register,on_delete=models.CASCADE,null=True,blank=True)
+    name=models.CharField(max_length=100,null=True,blank=True)
+    email=models.CharField(max_length=100,null=True,blank=True)
+    subject=models.TextField(null=True,blank=True)
+    message=models.TextField(null=True,blank=True)
+    date = models.DateTimeField(auto_now_add=True) 
+    def __str__(self):
+        return self.subject

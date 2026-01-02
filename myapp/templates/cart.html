@@ -27,6 +27,27 @@
 </head>
 
 <body>
+
+    <!-- {% if messages %}
+  {% for message in messages %}
+    <div class="alert 
+         {% if message.tags == 'success' %}alert-success
+         {% elif message.tags == 'error' %}alert-danger
+         {% endif %}">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %} -->
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
+
     <!-- Topbar Start -->
     <div class="container-fluid">
         <div class="row bg-secondary py-2 px-xl-5">
@@ -263,11 +284,12 @@
                 </table>
             </div>
             <div class="col-lg-4">
-                <form class="mb-5" action="">
+                <form class="mb-5" action="{% url 'apply_coupon' %}" method="post">
+                    {% csrf_token %}
                     <div class="input-group">
-                        <input type="text" class="form-control p-4" placeholder="Coupon Code">
+                        <input type="text" class="form-control p-4" placeholder="Coupon Code" name="coupon_code" required>
                         <div class="input-group-append">
-                            <button class="btn btn-primary">Apply Coupon</button>
+                            <button type="submit" class="btn btn-primary">Apply Coupon</button>
                         </div>
                     </div>
                 </form>
@@ -282,15 +304,21 @@
                         </div>
                         <div class="d-flex justify-content-between">
                             <h6 class="font-weight-medium">Shipping</h6>
-                            <h6 class="font-weight-medium"><i class="fa-solid fa-indian-rupee-sign"></i>{{shipping_amount}}</h6>
+                            <h6 class="font-weight-medium" style="color: red;">+<i class="fa-solid fa-indian-rupee-sign"></i>{{shipping_amount}}</h6>
                         </div>
+                        {% if coupon_benefit %}
+                        <div class="d-flex justify-content-between mt-3 pb-1">
+                            <h6 class="font-weight-medium">Coupon Discount</h6>
+                            <h6 class="font-weight-medium" style="color: green;">-<i class="fa-solid fa-indian-rupee-sign"></i>{{coupon_discount_amount}}</h6>
+                        </div>
+                        {% endif %}
                     </div>
                     <div class="card-footer border-secondary bg-transparent">
                         <div class="d-flex justify-content-between mt-2">
                             <h5 class="font-weight-bold">Total</h5>
                             <h5 class="font-weight-bold"><i class="fa-solid fa-indian-rupee-sign"></i>{{final_total_amount}}</h5>
                         </div>
-                        <form method="post" action="{% url 'checkout' %}">
+                        <form method="post" action="{% url 'checkout' %}?coupon_benefit={{coupon_benefit}}&coupon_discount_amount={{coupon_discount_amount}}">
                             {% csrf_token %}
                         <button class="btn btn-block btn-primary my-3 py-3" type="submit">Proceed To Checkout</button>
                         </form>

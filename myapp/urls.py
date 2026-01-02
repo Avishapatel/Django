@@ -55,5 +55,7 @@ urlpatterns = [
     path('profile',views.profile,name="profile"),
     path('update_profile',views.update_profile,name="update_profile"),
     path('upload_profile_image', views.upload_profile_image, name='upload_profile_image'),
+    path('apply_coupon',views.apply_coupon,name='apply_coupon'),
+    path('send_message',views.send_message,name='send_message'),
 
 ]

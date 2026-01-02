@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 import random
 from django.core.mail import send_mail
+from django.conf import settings
 
 # Create your views here.
 def home(request):
@@ -123,8 +124,14 @@ def checkout(request):
         user_name=Register.objects.get(email_id=request.session['email_id'])
         c_id=Main_category.objects.all()
         cart_id=Cart.objects.filter(user=user_name)
+        print('cartid',cart_id)
         billing_addres_id=Billing_address.objects.filter(user=user_name).first()
         discount_id=Discount.objects.all()
+        print('discount id',discount_id)
+        coupon_benefit=request.GET.get('coupon_benefit')
+        print("coupon_benefit",coupon_benefit)
+        coupon_discount_amount=request.GET.get('coupon_discount_amount')
+        print(coupon_discount_amount)
         if billing_addres_id:
             first_name=billing_addres_id.first_name
             last_name=billing_addres_id.last_name
@@ -151,6 +158,7 @@ def checkout(request):
         
         discount_amount = 0
         how_discount=0
+        
         for discount in discount_id:
             # Case 1: Below X (min is None)
             if discount.min_amount is None and discount.max_amount is not None:
@@ -172,8 +180,11 @@ def checkout(request):
                     discount_amount = (total_amount * discount.discount_percentage) / 100
                     how_discount=discount.discount_percentage
                     break
-
-        final_total_amount=(total_amount + shipping_amount)- discount_amount
+        
+        if coupon_benefit:
+            final_total_amount=(total_amount+shipping_amount)-(int(discount_amount)+int(coupon_discount_amount))
+        else:
+            final_total_amount=(total_amount + shipping_amount)- discount_amount
        
         contaxt={'c_id':c_id,
                      'user_name':user_name,
@@ -181,6 +192,8 @@ def checkout(request):
                      'cart_id':cart_id,
                      'wishlist_id':Wishlist.objects.filter(user=user_name),
                      'total_amount':total_amount,
+                     'coupon_benefit':coupon_benefit,
+                     'coupon_discount_amount':coupon_discount_amount,
                      'shipping_amount':shipping_amount,
                      'discount_amount':discount_amount,
                      "how_discount":how_discount,
@@ -210,6 +223,8 @@ def detail(request):
         c_id=Main_category.objects.all()
         cart_id=Cart.objects.filter(user=user_name)
         cart_product_ids = Cart.objects.filter(user=user_name).values_list('product_id', flat=True)
+        review_id = Rating.objects.filter(product=product_id).exclude(register_user=user_name)
+        
         # Get a random product if no product_id is provided
         if not product_id:
             product = Product.objects.order_by(Random()).first()
@@ -233,6 +248,8 @@ def detail(request):
                  'selected_product':selected_product,
                  'cart_product_ids': cart_product_ids,
                  'cart_id':cart_id,
+                 'like_product':Product.objects.order_by('?')[:8],
+                 'review_id':review_id,
                  'wishlist_id':Wishlist.objects.filter(user=user_name),
                  'size_id': Size.objects.all(),
                 'color_id': Color.objects.all(),
@@ -474,7 +491,8 @@ def view_details(request):
         selected_product = Product.objects.get(id=product)
         c_id = Main_category.objects.all()
         cart_product_ids = Cart.objects.filter(user=user_name).values_list('product_id', flat=True)
-        
+        review_id = Rating.objects.filter(product=product).exclude(register_user=user_name)
+        print("REVIEW",review_id)
         # Get user's previous rating
         try:
             rating_obj = Rating.objects.get(register_user=user_name, product=product)
@@ -487,11 +505,13 @@ def view_details(request):
         contaxt = {
                 'selected_product': selected_product,
                 'c_id': c_id,
+                'review_id':review_id,
                 'cart_product_ids': cart_product_ids,
                 'size_id': Size.objects.all(),
                 'color_id': Color.objects.all(),
                  "cart_id":Cart.objects.filter(user=user_name),
                  'wishlist_id':Wishlist.objects.filter(user=user_name),
+                 'like_product':Product.objects.order_by('?')[:8],
                 'user_email':user_email,
                 'user_name':user_name,
                 'user_rating':user_rating,
@@ -650,8 +670,70 @@ def reset_password(request):
 
     return render(request, 'reset_password.html')
 
-        
+def send_message(request):
+    if 'email_id' in request.session or 'user_name' in request.session:
+        user_name=Register.objects.get(email_id=request.session['email_id'])
+        if request.POST:  
+            name=request.POST.get('name','').strip()  
+            email=request.POST.get('email') 
+            subject=request.POST.get('subject','').strip()  
+            message=request.POST.get('message','').strip() 
+            print("hello")
+            # validation 
+            if not name or not email or not message:
+                messages.error(request, "All fields are required ❌")
+                return redirect("contact")
+            
+            # ✅ SAVE TO DATABASE
+            Contact.objects.create(
+                user=user_name,
+                name=name,
+                email=email,
+                subject=subject,
+                message=message
+            )
 
+            # ✅ PROPER PROFESSIONAL MESSAGE
+            full_message = f"""
+                    Hello Admin,
+
+                    You have received a new message from the website contact form.
+
+                    Sender Details:
+                    -------------------------
+                    Name  : {name}
+                    Email : {email}
+
+                    Message:
+                    -------------------------
+                    {message}
+
+                    ---------------------------------------
+                    This message was sent from the Contact Page.
+                    """
+            print(name,email,message,subject,full_message)
+            try:
+                if subject:
+                    email_subject = subject
+                else:
+                    email_subject = "New Contact Message"
+
+                send_mail(
+                    email_subject,
+                    full_message,
+                    settings.EMAIL_HOST_USER,
+                    ['avishapatel.pif@gmail.com'],   # admin email
+                    fail_silently=False,
+                )
+                print("successfully")
+                messages.success(request, "Your message has been sent successfully ✅")
+            except:
+                messages.error(request, "Something went wrong. Please try again ❌")
+                print("error")
+
+        return redirect("contact")
+
+    return render(request, "contact.html")
 
 
 def profile(request):
@@ -859,6 +941,60 @@ def save_review(request):
 
         return redirect(f'/view_details?product_id={product_id}')
     return render(request,'index.html')
+
+def apply_coupon(request):
+    user_name=Register.objects.get(email_id=request.session['email_id'])
+    cart_id=Cart.objects.filter(user=user_name)
+    print(user_name, type(user_name))
+    print(user_name.id) 
+    total_amount=0
+    coupon_discount_amount=0
+    final_amount=0
+    coupon_benefit=False
+    for i in cart_id:
+        total_amount=i.total_price + total_amount if 'total_amount' in locals() else i.total_price
+    if total_amount >=999:
+        shipping_amount=50
+    else:
+        shipping_amount=0
+    final_total_amount=total_amount + shipping_amount
+    print("total",total_amount)
+    if request.method == "POST":
+        coupon_code = request.POST.get("coupon_code")
+        print(coupon_code)
+        coupon = coupon_discount.objects.filter(
+            coupon_name__iexact=coupon_code,
+            user=user_name,          # ✅ USER FOREIGN KEY CHECK
+            active=True
+        ).first()
+        print(coupon)
+        if coupon:
+            coupon_discount_amount = coupon.discount
+            print(coupon_discount_amount)
+            final_amount=total_amount-coupon_discount_amount
+            print(final_amount)
+            final_total_amount=final_amount+shipping_amount
+            coupon_benefit=True
+            messages.success(request, "Coupon activated successfully ✅")
+        else:
+            print('invalid coupon')
+            messages.error(request, "Invalid coupon ❌")
+        
+        context = {
+            "cart_id": cart_id,
+            "total_amount": total_amount,
+            "user_name":user_name,
+            'wishlist_id':Wishlist.objects.filter(user=user_name),
+            "coupon_discount_amount": coupon_discount_amount,
+            "final_amount": final_amount,
+            'shipping_amount':shipping_amount,
+            "final_total_amount":final_total_amount,
+            'coupon_benefit':coupon_benefit
+        }
+
+        return render(request, "cart.html", context)
+   
+
 
 
 

@@ -15,4 +15,6 @@ admin.site.register(Billing_address)
 admin.site.register(Order)
 admin.site.register(Wishlist)
 admin.site.register(Discount)
+admin.site.register(coupon_discount)
+admin.site.register(Contact)
 
