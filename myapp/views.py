@@ -8,6 +8,7 @@ from django.core.paginator import Paginator
 import random
 from django.core.mail import send_mail
 from django.conf import settings
+from django.db.models import Q
 
 # Create your views here.
 def home(request):
@@ -24,7 +25,9 @@ def index(request):
         wishlist_product_ids = Wishlist.objects.filter(user=user_name).values_list('product_id', flat=True)
         trandy_product=Product.objects.order_by('?')[:8]  #random 8 products
         random_just_arrived = Product.objects.order_by('-id').order_by('?')[:8] #latest 8 products randomly
-
+        subscriber=Subscribe.objects.filter(email=user_name.email_id).first()
+        print("subscriber",subscriber)
+       
         for category in c_id:
             random_product = Product.objects.filter(main_cat=category).order_by('?').first()
             category.random_product = random_product
@@ -33,7 +36,8 @@ def index(request):
                    'trandy_product':trandy_product,'just_arrived_product':random_just_arrived,
                    'cart_product_ids': cart_product_ids,
                    'wishlist_id':wishlist_id,
-                   'wishlist_product_ids': wishlist_product_ids
+                   'subscriber':subscriber,
+                   'wishlist_product_ids': wishlist_product_ids,
                    }
         return render(request, 'index.html', contaxt)
     else:
@@ -61,7 +65,8 @@ def cart(request):
                      'wishlist_id':Wishlist.objects.filter(user=user_name),
                      'total_amount':total_amount,
                      'shipping_amount':shipping_amount,
-                     'final_total_amount':final_total_amount
+                     'final_total_amount':final_total_amount,
+                     'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()
                      }
             return render(request,'cart.html',contaxt)
         else:
@@ -83,7 +88,8 @@ def cart(request):
                     'cart_id':cart_id,
                     'total_amount':total_amount,
                     'shipping_amount':shipping_amount,
-                    'final_total_amount':final_total_amount
+                    'final_total_amount':final_total_amount,
+                    'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()
                     }
             return render(request,'cart.html',contaxt)
     else:
@@ -113,7 +119,8 @@ def wishlist(request):
                  'user_name':user_name,
                  'wishlist_id':wishlist_id,
                  'cart_id':cart_id,
-                'cart_product_ids': cart_product_ids
+                'cart_product_ids': cart_product_ids,
+                'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()
                  }
         return render(request,'wishlist.html',contaxt)
      else:
@@ -198,6 +205,7 @@ def checkout(request):
                      'discount_amount':discount_amount,
                      "how_discount":how_discount,
                      'final_total_amount':final_total_amount,
+                     'subscriber':Subscribe.objects.filter(email=user_name.email_id).first(),
                      'first_name':first_name,'last_name':last_name,'email_id':email_id,'phone_no':phone_no,'address_l1':address_l1,
                       'address_l2':address_l2,'country':country,'city':city,'state':state,'zip_code':zip_code
                      }
@@ -210,7 +218,8 @@ def contact(request):
         user_name=Register.objects.get(email_id=request.session['email_id'])
         cart_id=Cart.objects.filter(user=user_name)
         c_id=Main_category.objects.all()
-        contaxt={'c_id':c_id,'cart_id':cart_id,'user_name':user_name,'wishlist_id':Wishlist.objects.filter(user=user_name),}
+        contaxt={'c_id':c_id,'cart_id':cart_id,'user_name':user_name,'wishlist_id':Wishlist.objects.filter(user=user_name),
+                 'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()}
         return render(request,'contact.html',contaxt)
      else:
         return render(request,'login.html')
@@ -223,7 +232,8 @@ def detail(request):
         c_id=Main_category.objects.all()
         cart_id=Cart.objects.filter(user=user_name)
         cart_product_ids = Cart.objects.filter(user=user_name).values_list('product_id', flat=True)
-        review_id = Rating.objects.filter(product=product_id).exclude(register_user=user_name)
+        review_id = Rating.objects.filter(product=product_id)
+        print('review_id',review_id)
         
         # Get a random product if no product_id is provided
         if not product_id:
@@ -257,6 +267,7 @@ def detail(request):
                  'user_email':user_email,
                  'user_rating':user_rating,
                  'user_review':user_review,
+                 'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()
                  }
         
         return render(request,'detail.html',contaxt)
@@ -312,6 +323,7 @@ def shop(request):
         contaxt= {
         "p_id":p_id,
         "page_obj": page_obj,
+        'user_name':user_name,
         "cart_id":cart_id,
         'wishlist_id':Wishlist.objects.filter(user=user_name),
         "query_string": query_string,
@@ -325,7 +337,8 @@ def shop(request):
         "total_size_product":total_size_product,
         "total_price_product":total_price_product,
         "price_range":price_range,
-        "price_id":price_id
+        "price_id":price_id,
+        'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()
         }
         return render(request,'shop.html',contaxt)
      else:
@@ -368,7 +381,9 @@ def color_filter(request):
         "total_size_product":Product.objects.filter(size__isnull=False).count(),
         "total_price_product":total_price_product,
         "price_range":price_range,
-        "price_id":price_id
+        "price_id":price_id,
+        'user_name':user_name,
+        'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()
 
         }
         return render(request, 'shop.html', contaxt)
@@ -410,7 +425,9 @@ def size_filter(request):
         "total_size_product":Product.objects.filter(size__isnull=False).count(),
         "total_price_product":total_price_product,
         "price_range":price_range,
-        "price_id":price_id
+        "price_id":price_id,
+        'user_name':user_name,
+        'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()
 
         }
         return render(request,'shop.html',contaxt)
@@ -475,6 +492,8 @@ def price_filter(request):
             "total_price_product": total_price_product,
             "price_range": price_range,
             "price_id": price_id,
+            'user_name':user_name,
+        'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()
         }
 
         return render(request, 'shop.html', context)
@@ -491,7 +510,7 @@ def view_details(request):
         selected_product = Product.objects.get(id=product)
         c_id = Main_category.objects.all()
         cart_product_ids = Cart.objects.filter(user=user_name).values_list('product_id', flat=True)
-        review_id = Rating.objects.filter(product=product).exclude(register_user=user_name)
+        review_id = Rating.objects.filter(product=product)
         print("REVIEW",review_id)
         # Get user's previous rating
         try:
@@ -515,7 +534,9 @@ def view_details(request):
                 'user_email':user_email,
                 'user_name':user_name,
                 'user_rating':user_rating,
-                'user_review':user_review
+                'user_review':user_review,
+                'user_name':user_name,
+        'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()
 
             }
         return render(request, 'detail.html', contaxt)
@@ -526,11 +547,21 @@ def search(request):
      if 'email_id' in request.session or 'user_name' in request.session:
         user_name=Register.objects.get(email_id=request.session['email_id'])
         search_data = request.POST.get('search', '').strip()  # Get search data from POST request
+        source = request.POST.get('source')
         if search_data:
             p_id=Product.objects.filter(product_name__icontains=search_data)
+            if not p_id.exists():
+                messages.info(
+                    request,
+                    f"No products found for “{search_data}”.",extra_tags=source
+                )
+                return redirect(request.META.get('HTTP_REFERER', '/'))
         else:
-            p_id=Product.objects.order_by('-id')  
-            
+            p_id=Product.objects.all() 
+
+        print("search",search_data)
+        print(p_id)
+        
         price_id,total_price_product,price_range=find_price_range(request)
 
          # Pagination: 9 items per page (change page_size as needed)
@@ -550,11 +581,15 @@ def search(request):
              'wishlist_id':Wishlist.objects.filter(user=user_name),
             "total_price_product":total_price_product,
             "price_range":price_range,
-            "price_id":price_id
+            "price_id":price_id,
+            'user_name':user_name,
+        'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()
         }
         return render(request,'shop.html',contaxt)
      else:
         return render(request,'login.html')
+
+
 
 def login(request):
     if request.method == "POST":
@@ -731,9 +766,52 @@ def send_message(request):
                 messages.error(request, "Something went wrong. Please try again ❌")
                 print("error")
 
-        return redirect("contact")
+            return redirect("contact")
 
-    return render(request, "contact.html")
+        return render(request, "contact.html")
+    else:
+        return render(request,'login.html')
+
+def subscribe(request):
+    if 'email_id' in request.session or 'user_name' in request.session:
+        user_name=Register.objects.get(email_id=request.session['email_id'])
+        if request.method == "POST":
+            source = request.POST.get('source')
+            email = request.POST.get('email')
+            name = request.POST.get('name')
+            print('subscriber = ',name ,email)
+           
+            try:
+                print("hello")
+                Subscribe.objects.create(user=user_name,email=email,name=name,is_active=True)
+                print("save")
+                messages.success(request, "You’re subscribed successfully. Thank you for joining us!",extra_tags=source)
+            except:
+                messages.error(request, "Something went wrong. Please try again ❌",extra_tags=source)
+                print("error")
+
+        return redirect(request.META.get('HTTP_REFERER', '/'))
+    else:
+        return render(request,'login.html')
+    
+def unsubscribe(request):
+    if 'email_id' in request.session or 'user_name' in request.session:
+        user_name=Register.objects.get(email_id=request.session['email_id'])
+        if request.method == "POST":
+            source = request.POST.get('source')
+            try:
+                subscriber=Subscribe.objects.get(email=user_name.email_id)
+                subscriber.is_active = False
+                subscriber.delete()
+                messages.success(request, "You’ve been unsubscribed successfully.",extra_tags=source)
+            except:
+                messages.error(request, "Something went wrong. Please try again ❌",extra_tags=source)
+                print("error")
+
+            
+        return redirect(request.META.get('HTTP_REFERER', '/'))
+    else:
+        return render(request,'login.html')
 
 
 def profile(request):
@@ -741,7 +819,8 @@ def profile(request):
         user_name=Register.objects.get(email_id=request.session['email_id'])
         c_id=Main_category.objects.all()
         cart_id=Cart.objects.filter(user=user_name)
-        contaxt={'c_id':c_id,'cart_id':cart_id,'user_name':user_name,'wishlist_id':Wishlist.objects.filter(user=user_name),}
+        contaxt={'c_id':c_id,'cart_id':cart_id,'user_name':user_name,'wishlist_id':Wishlist.objects.filter(user=user_name),
+                 'user_name':user_name,'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()}
         return render(request,'profile.html',contaxt)
     else:
         return render(request,'login.html')
@@ -750,6 +829,7 @@ def update_profile(request):
     if 'email_id' in request.session or 'user_name' in request.session:
         user_name=Register.objects.get(email_id=request.session['email_id'])
         if request.method == "POST":
+            source = request.POST.get('source')
             full_name = request.POST.get('full_name', '').strip()
             phone_no = request.POST.get('phone_no', '').strip()
             action_type = request.POST.get('action_type', '')
@@ -763,34 +843,38 @@ def update_profile(request):
                 if not all([full_name,phone_no,old_password, new_password, confirm_password]):
                     return render(request, 'profile.html', {'alert': 'Please fill all fields.', "c_id": Main_category.objects.all(),
                                 'user_name':user_name,'wishlist_id':Wishlist.objects.filter(user=user_name),
-                                'cart_id':Cart.objects.filter(user=user_name)})
+                                'cart_id':Cart.objects.filter(user=user_name),'user_name':user_name,
+                                'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()})
                
                 if old_password != user_name.password:
                     
                     return render(request, 'profile.html', {'alert': 'Old password is incorrect.', "c_id": Main_category.objects.all(),'user_name':user_name,'wishlist_id':Wishlist.objects.filter(user=user_name),
-                                'cart_id':Cart.objects.filter(user=user_name)})
+                                'cart_id':Cart.objects.filter(user=user_name),'user_name':user_name,
+                                'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()})
                 if new_password != confirm_password:
                     return render(request, 'profile.html', {'alert': 'New passwords do not match.', "c_id": Main_category.objects.all(),'user_name':user_name,'wishlist_id':Wishlist.objects.filter(user=user_name),
-                                'cart_id':Cart.objects.filter(user=user_name)})
+                                'cart_id':Cart.objects.filter(user=user_name),'user_name':user_name,
+                                'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()})
                 user_name.full_name = full_name
                 user_name.phone_no = phone_no
                 user_name.password = new_password
                 user_name.confirm_password = confirm_password
                 user_name.save()
                 request.session['user_name'] =  user_name.full_name
-                messages.success(request, "Password changed successfully!")
+                messages.success(request, "Password changed successfully!",extra_tags=source)
                 return redirect('profile')  
             
             else:
                    
                     if not all([full_name, phone_no]):
                         return render(request, 'profile.html', {'alert': 'Please fill all fields.', "c_id": Main_category.objects.all(),'user_name':user_name,'wishlist_id':Wishlist.objects.filter(user=user_name),
-                                'cart_id':Cart.objects.filter(user=user_name)})
+                                'cart_id':Cart.objects.filter(user=user_name),'user_name':user_name,
+                                'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()})
                     user_name.full_name = full_name
                     user_name.phone_no = phone_no
                     user_name.save()
                     request.session['user_name'] =  user_name.full_name
-                    messages.success(request, "Profile updated successfully!")
+                    messages.success(request, "Profile updated successfully!",extra_tags=source)
                     return redirect('profile')  
     else:
         return render(request,'login.html')
@@ -838,7 +922,9 @@ def latest_products(request):
          'wishlist_id':Wishlist.objects.filter(user=user_name),
         "total_price_product":total_price_product,
         "price_range":price_range,
-        "price_id":price_id
+        "price_id":price_id,
+        'user_name':user_name,
+        'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()
         }
         return render(request,'shop.html',contaxt)
     else:
@@ -867,7 +953,9 @@ def popular_products(request):
          'wishlist_id':Wishlist.objects.filter(user=user_name),
         "total_price_product":total_price_product,
         "price_range":price_range,
-        "price_id":price_id
+        "price_id":price_id,
+        'user_name':user_name,
+        'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()
         }
         return render(request,'shop.html',contaxt)
     else:
@@ -901,7 +989,9 @@ def best_rated_products(request):
          'wishlist_id':Wishlist.objects.filter(user=user_name),
         "total_price_product":total_price_product,
         "price_range":price_range,
-        "price_id":price_id
+        "price_id":price_id,
+        'user_name':user_name,
+        'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()
         }
         return render(request,'shop.html',contaxt)
     else:
@@ -927,7 +1017,9 @@ def save_review(request):
         if not rating:
             messages.error(request, "Please give a rating before submitting.")
             return redirect(f'/view_details?product_id={product_id}')
-        rating = float(rating)
+        else:
+            messages.success(request, "Thank you for your review! Your feedback has been submitted successfully ⭐")
+            rating = float(rating)
         # Get the logged-in Register instance
         user_name=Register.objects.get(email_id=request.session['email_id'])
         # Update if exists, else create
@@ -989,7 +1081,9 @@ def apply_coupon(request):
             "final_amount": final_amount,
             'shipping_amount':shipping_amount,
             "final_total_amount":final_total_amount,
-            'coupon_benefit':coupon_benefit
+            'coupon_benefit':coupon_benefit,
+            'user_name':user_name,
+            'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()
         }
 
         return render(request, "cart.html", context)
@@ -1099,7 +1193,8 @@ def add_wishlist(request):
         wishlist_id=Wishlist.objects.filter(user=user_name)
         print("wishlist items:",wishlist_id)
         contaxt={'whishlist_id':wishlist_id,
-                 'user_name':user_name}
+                 'user_name':user_name,
+        'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()}
         return redirect('shop')
      else:
         return render(request,'login.html')
@@ -1149,3 +1244,45 @@ def add_billing_address(request):
         return redirect('checkout')
     return render(request, 'checkout.html')
 
+def order_success(request):
+    user = Register.objects.get(email_id=request.session['email_id'])
+    order = Order.objects.filter(user=user).latest('order_date')
+    return render(request, 'order_success.html', {'order': order})
+
+
+def my_orders(request):
+    user = Register.objects.get(email_id=request.session['email_id'])
+    orders = Order.objects.filter(user=user).order_by('-order_date')
+    return render(request, 'my_orders.html', {'orders': orders})
+
+
+def place_order(request):
+    if request.POST:
+        user=Register.objects.get(email_id=request.session['email_id'])
+        billing_address=Billing_address.objects.get(user=user)
+        bill_amount=request.POST.get('bill_amount')
+        # order_status=
+        payment_mode=request.POST.get('payment')
+        # payment_status=
+        print("order",user,cart,billing_address,bill_amount,payment_mode)
+        cart_items = Cart.objects.filter(user=user)
+
+        if not cart_items.exists():
+            messages.error(request, "Your cart is empty")
+            return redirect('cart')
+        order=Order.objects.create(user=user,billing_address=billing_address,bill_amount=bill_amount,payment_mode=payment_mode)
+        for item in cart_items:
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                quantity=item.quantity,
+                price=item.product.product_price
+            )
+
+        cart_items.delete()
+
+        messages.success(request, "Order placed successfully")
+        return redirect('order_success')
+        # print("Order placed successfully")
+        # return redirect("checkout")
+    return render(request,'checkout.html')

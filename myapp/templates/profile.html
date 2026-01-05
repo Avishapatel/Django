@@ -133,7 +133,10 @@
 </style>
 
 
+
+
 <div class="container-fluid pt-5">
+  
   <div class="row px-xl-5 justify-content-center">
     <style>
 /* inline (page-scoped) placeholder override */
@@ -146,15 +149,20 @@
 
     <div class="col-lg-9">
       <div class="row">
+        
         <div class="col-md-4 mb-5">
+          
           <div class="card shadow-sm">
+            
             <div class="card-body text-center">
+              
                 <div class="profile-pic-wrapper">
-               <img src="{% if user_name.user_img %}{{ user_name.user_img.url }}{% else %}/static/img/user.jpg{% endif %}"
+               <img src="{% if user_name.user_img %}{{ user_name.user_img.url }}{% else %}/static/img/user_img.jpg{% endif %}"
        class="profile-image-preview"
        alt="User">
        <form id="profile-image-form" method="post" action="{% url 'upload_profile_image' %}" enctype="multipart/form-data" style="margin-top:8px;">
     {% csrf_token %}
+    
     <input type="file" name="user_img" id="profile-image-input" accept="image/*" style="display:none;">
     <button type="button" id="change-image-btn" class="camera-btn"><i class="fa-solid fa-camera"></i></button>
   </form>
@@ -181,10 +189,23 @@
                     </div>
                     {% endif %}
 
+                    {% if messages %}
+                    {% for message in messages %}
+                        {% if 'update_profile_subscribe' in message.tags %}
+                        <div class="alert 
+                            {% if 'success' in message.tags %}alert-success
+                            {% elif 'error' in message.tags %}alert-danger
+                            {% endif %}
+                            auto-hide-message">
+                            {{ message }}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% endif %}
 
           <form action="{% url 'update_profile' %}" method="post">
             {% csrf_token %}
-            
+            <input type="hidden" name="source" value="update_profile_subscribe">
             <div class="form-group">
               <label>Name</label>
               <input type="text" name="full_name" class="form-control form-control-lg" value="{{ user_name }}" required>
@@ -225,8 +246,7 @@
 
 <button type="submit" class="btn btn-primary btn-block border-0 py-3">Update Profile</button>
 
-        
-        </form>
+</form>
 
 <!-- upload image script -->
 <script>
@@ -256,25 +276,149 @@ function showChangePassword() {
 
           <hr class="my-4">
 
-          <!-- <h4 class="mb-3">Recent Orders</h4>
-          {% if orders %}
-            <div class="list-group">
-              {% for order in orders %}
-                <a href="{% url 'order_detail' order.id %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                  <div>
-                    <strong>Order #{{ order.id }}</strong><br>
-                    <small class="text-muted">{{ order.created_at }}</small>
-                  </div>
-                  <span class="badge badge-primary">{{ order.total|default:"₹0" }}</span>
-                </a>
-              {% endfor %}
-            </div>
-          {% else %}
-            <p class="text-muted">You have no recent orders.</p>
-          {% endif %} -->
+         
         </div>
       </div>
     </div>
   </div>
 </div>
 {% endblock %}
+  <!-- Footer Start -->
+    <div class="container-fluid bg-secondary text-dark mt-5 pt-5">
+        <div class="row px-xl-5 pt-5">
+            <div class="col-lg-4 col-md-12 mb-5 pr-3 pr-xl-5">
+                <a href="" class="text-decoration-none">
+                    <h1 class="mb-4 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border border-white px-3 mr-1">E</span>Shopper</h1>
+                </a>
+                <p>This online shopping platform offers quality products at affordable prices with a smooth and secure shopping experience.</p>
+                <p class="mb-2"><i class="fa fa-map-marker-alt text-primary mr-3"></i>Surat ,Gujarat ,India</p>
+                <p class="mb-2"><i class="fa fa-envelope text-primary mr-3"></i>avisha14898@gmail.com</p>
+                <p class="mb-0"><i class="fa fa-phone-alt text-primary mr-3"></i>6351241596</p>
+            </div>
+            <div class="col-lg-8 col-md-12">
+                <div class="row">
+                    <div class="col-md-4 mb-5">
+                        <h5 class="font-weight-bold text-dark mb-4">Quick Links</h5>
+                        <div class="d-flex flex-column justify-content-start">
+                            <a class="text-dark mb-2" href="{% url 'index' %}"><i class="fa fa-angle-right mr-2"></i>Home</a>
+                            <a class="text-dark mb-2" href="{% url 'shop' %}"><i class="fa fa-angle-right mr-2"></i>Our Shop</a>
+                            <a class="text-dark mb-2" href="{% url 'detail' %}"><i class="fa fa-angle-right mr-2"></i>Shop Detail</a>
+                            <a class="text-dark mb-2" href="{% url 'cart' %}"><i class="fa fa-angle-right mr-2"></i>Shopping Cart</a>
+                            <a class="text-dark mb-2" href="{% url 'checkout' %}"><i class="fa fa-angle-right mr-2"></i>Checkout</a>
+                            <a class="text-dark" href="{% url 'contact' %}"><i class="fa fa-angle-right mr-2"></i>Contact Us</a>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-5">
+                        <h5 class="font-weight-bold text-dark mb-4">Quick Links</h5>
+                        <div class="d-flex flex-column justify-content-start">
+                            <a class="text-dark mb-2" href="{% url 'index' %}"><i class="fa fa-angle-right mr-2"></i>Home</a>
+                            <a class="text-dark mb-2" href="{% url 'shop' %}"><i class="fa fa-angle-right mr-2"></i>Our Shop</a>
+                            <a class="text-dark mb-2" href="{% url 'detail' %}"><i class="fa fa-angle-right mr-2"></i>Shop Detail</a>
+                            <a class="text-dark mb-2" href="{% url 'cart' %}"><i class="fa fa-angle-right mr-2"></i>Shopping Cart</a>
+                            <a class="text-dark mb-2" href="{% url 'checkout' %}"><i class="fa fa-angle-right mr-2"></i>Checkout</a>
+                            <a class="text-dark" href="{% url 'contact' %}"><i class="fa fa-angle-right mr-2"></i>Contact Us</a>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-5">
+                        <h5 class="font-weight-bold text-dark mb-4">Newsletter</h5>
+                        {% if subscriber %}
+                        <form action="{% url 'unsubscribe' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="source" value="footer_subscribe">
+                            <div class="form-group">
+                                <input type="text" class="form-control border-0 py-4" placeholder="Your Name" value="{{user_name.full_name}}" name="name" readonly />
+                            </div>
+                            <div class="form-group">
+                                <input type="email" class="form-control border-0 py-4" placeholder="Your Email" value="{{user_name.email_id}}" name="email"
+                                   readonly />
+                            </div>
+                            <div>
+                                <button class="btn btn-primary btn-block border-0 py-3" type="submit">Unsubscribe</button>
+                            </div>
+                        </form>
+                        {% else %}
+                        <form action="{% url 'subscribe' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="source" value="footer_subscribe">
+
+                            <div class="form-group">
+                                <input type="text" class="form-control border-0 py-4" placeholder="Your Name" value="{{user_name.full_name}}" name="name" required />
+                            </div>
+                            <div class="form-group">
+                                <input type="email" class="form-control border-0 py-4" placeholder="Your Email" value="{{user_name.email_id}}" name="email"
+                                   readonly />
+                            </div>
+                            <div>
+                                <button class="btn btn-primary btn-block border-0 py-3" type="submit">Subscribe Now</button>
+                            </div>
+                        </form>
+                      {% endif %}
+                       
+                   
+                    </div>
+                </div>
+                
+                    {% if messages %}
+                    {% for message in messages %}
+                        {% if 'footer_subscribe' in message.tags %}
+                        <div class="alert 
+                            {% if 'success' in message.tags %}alert-success
+                            {% elif 'error' in message.tags %}alert-danger
+                            {% endif %}
+                            auto-hide-message">
+                            {{ message }}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% endif %}
+
+                    <script>
+                        setTimeout(function () {
+                            const alerts = document.querySelectorAll('.auto-hide-message');
+                            alerts.forEach(function(alert) {
+                            alert.style.opacity = '0';
+                            setTimeout(() => alert.remove(), 500);
+                            });
+                        }, 3000);
+                        </script>
+
+
+                    
+            </div>
+        </div>
+        <div class="row border-top border-light mx-xl-5 py-4">
+            <div class="col-md-6 px-xl-0">
+                <p class="mb-md-0 text-center text-md-left text-dark">
+                    &copy; <a class="text-dark font-weight-semi-bold" href="#">Shopping Platform</a>. All Rights Reserved. Designed
+                    by
+                    <a class="text-dark font-weight-semi-bold" href="https://htmlcodex.com">HTML Codex</a><br>
+                    Distributed By <a href="https://themewagon.com" target="_blank">ThemeWagon</a>
+                </p>
+            </div>
+            <div class="col-md-6 px-xl-0 text-center text-md-right">
+                <img class="img-fluid" src="static/img/payments.png" alt="">
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Contact Javascript File -->
+    <script src="mail/jqBootstrapValidation.min.js"></script>
+    <script src="mail/contact.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+</body>
+
+</html>

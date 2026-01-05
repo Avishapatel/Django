@@ -422,7 +422,7 @@ Designed to provide comfort, durability, and long-lasting performance.</p>
                                     {% if review.register_user.user_img %}
                                         <img src="{{review.register_user.user_img.url}}" alt="Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
                                     {% else %}
-                                        <img src="{% static 'img/cat-1.jpg' %}" alt="Default User Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
+                                        <img src="{% static 'img/user_img.jpg' %}" alt="Default User Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
                                     {% endif %}
 
                                     
@@ -445,6 +445,28 @@ Designed to provide comfort, durability, and long-lasting performance.</p>
 
                             <div class="col-md-6">
                                 <h4 class="mb-4">Leave a review</h4>
+                                 {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert 
+                        {% if message.tags == 'success' %}alert-success
+                        {% elif message.tags == 'error' %}alert-danger
+                        {% endif %}
+                        auto-hide-message">
+                        {{ message }}
+                        </div>
+                    {% endfor %}
+                    {% endif %}
+
+
+                    <script>
+                        setTimeout(function () {
+                            const alerts = document.querySelectorAll('.auto-hide-message');
+                            alerts.forEach(function(alert) {
+                            alert.style.opacity = '0';
+                            setTimeout(() => alert.remove(), 500);
+                            });
+                        }, 3000);
+                        </script>
                                 <small>Your email address will not be published. Required fields are marked *</small>
                                 <form id="reviewForm" action="{% url 'save_review' %}" method="post">
                                 {% csrf_token %}
@@ -705,20 +727,67 @@ Designed to provide comfort, durability, and long-lasting performance.</p>
                     </div>
                     <div class="col-md-4 mb-5">
                         <h5 class="font-weight-bold text-dark mb-4">Newsletter</h5>
-                        <form action="">
+                        {% if subscriber %}
+                        <form action="{% url 'unsubscribe' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="source" value="footer_subscribe">
                             <div class="form-group">
-                                <input type="text" class="form-control border-0 py-4" placeholder="Your Name" required="required" />
+                                <input type="text" class="form-control border-0 py-4" placeholder="Your Name" value="{{user_name.full_name}}" name="name" readonly />
                             </div>
                             <div class="form-group">
-                                <input type="email" class="form-control border-0 py-4" placeholder="Your Email"
-                                    required="required" />
+                                <input type="email" class="form-control border-0 py-4" placeholder="Your Email" value="{{user_name.email_id}}" name="email"
+                                   readonly />
+                            </div>
+                            <div>
+                                <button class="btn btn-primary btn-block border-0 py-3" type="submit">Unsubscribe</button>
+                            </div>
+                        </form>
+                        {% else %}
+                        <form action="{% url 'subscribe' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="source" value="footer_subscribe">
+
+                            <div class="form-group">
+                                <input type="text" class="form-control border-0 py-4" placeholder="Your Name" value="{{user_name.full_name}}" name="name" required />
+                            </div>
+                            <div class="form-group">
+                                <input type="email" class="form-control border-0 py-4" placeholder="Your Email" value="{{user_name.email_id}}" name="email"
+                                   readonly />
                             </div>
                             <div>
                                 <button class="btn btn-primary btn-block border-0 py-3" type="submit">Subscribe Now</button>
                             </div>
                         </form>
+                      {% endif %}
+                       
+                   
                     </div>
                 </div>
+                
+                    {% if messages %}
+                    {% for message in messages %}
+                        {% if 'footer_subscribe' in message.tags %}
+                        <div class="alert 
+                            {% if 'success' in message.tags %}alert-success
+                            {% elif 'error' in message.tags %}alert-danger
+                            {% endif %}
+                            auto-hide-message">
+                            {{ message }}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% endif %}
+
+                    <script>
+                        setTimeout(function () {
+                            const alerts = document.querySelectorAll('.auto-hide-message');
+                            alerts.forEach(function(alert) {
+                            alert.style.opacity = '0';
+                            setTimeout(() => alert.remove(), 500);
+                            });
+                        }, 3000);
+                        </script>
+
             </div>
         </div>
         <div class="row border-top border-light mx-xl-5 py-4">

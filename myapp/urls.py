@@ -48,7 +48,9 @@ urlpatterns = [
     path("popular_products", views.popular_products, name="popular_products"),
     path("best_rated_products", views.best_rated_products, name="best_rated_products"),
     path("add_billing_address", views.add_billing_address, name="add_billing_address"),
-    path("Order", views.Order, name="Order"),
+    path("place_order", views.place_order, name="place_order"),
+    path("my_orders", views.my_orders, name="my_orders"),
+    path("order_success", views.order_success, name="order_success"),
     path("wishlist", views.wishlist, name="wishlist"),
     path("add_wishlist", views.add_wishlist, name="add_wishlist"),
     path("remove_wishlist", views.remove_wishlist, name="remove_wishlist"),
@@ -57,5 +59,7 @@ urlpatterns = [
     path('upload_profile_image', views.upload_profile_image, name='upload_profile_image'),
     path('apply_coupon',views.apply_coupon,name='apply_coupon'),
     path('send_message',views.send_message,name='send_message'),
+    path('subscribe',views.subscribe,name='subscribe'),
+    path('unsubscribe',views.unsubscribe,name='unsubscribe')
 
 ]

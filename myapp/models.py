@@ -1,4 +1,5 @@
 from django.db import models
+import uuid
 
 # Create your models here.
 class Main_category(models.Model):
@@ -111,14 +112,30 @@ class Discount(models.Model):
 
 class Order(models.Model):
     user=models.ForeignKey(Register,on_delete=models.CASCADE,null=True,blank=True)
-    cart=models.ForeignKey(Cart,on_delete=models.CASCADE,null=True,blank=True)
     billing_address=models.ForeignKey(Billing_address,on_delete=models.CASCADE,null=True,blank=True)
-    order_date=models.DateTimeField(auto_now_add=True)
-    order_status=models.CharField(max_length=100,default='Pending')
-    payment_mode=models.CharField(max_length=100,default='COD')
-    payment_status=models.CharField(max_length=100,default='Pending')
+    order_date=models.DateTimeField(auto_now_add=True,null=True,blank=True)
+    order_id = models.CharField(max_length=20, unique=True, editable=False,null=True,blank=True)
+    bill_amount=models.FloatField(null=True,blank=True)
+    order_status=models.CharField(max_length=100,default='Pending',null=True,blank=True)
+    payment_mode=models.CharField(max_length=100,default='COD',null=True,blank=True)
+    payment_status=models.CharField(max_length=100,default='Pending',null=True,blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.order_id:
+            self.order_id = "ORD-" + uuid.uuid4().hex[:8].upper()
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return self.user.full_name + " - " + self.order_status 
+        return self.user.full_name + " - " + self.order_id + " - " + self.order_status 
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+    price = models.FloatField()
+    def __str__(self):
+        return f"{self.order.order_id} - ₹{self.order.bill_amount}"
+
 
 class coupon_discount(models.Model):
     user=models.ForeignKey(Register,on_delete=models.CASCADE,null=True,blank=True)
@@ -137,3 +154,13 @@ class Contact(models.Model):
     date = models.DateTimeField(auto_now_add=True) 
     def __str__(self):
         return self.subject
+    
+class Subscribe(models.Model):
+    user=models.ForeignKey(Register,on_delete=models.CASCADE,null=True,blank=True)
+    name = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    is_active = models.BooleanField(default=True)   # 👈 important
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.email

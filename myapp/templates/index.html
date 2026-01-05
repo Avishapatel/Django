@@ -91,20 +91,41 @@
                 </div>
             </div>
         </div>
+         <!-- {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-info auto-hide-message">
+                    {{ message }}
+                    </div>
+                {% endfor %}
+                {% endif %} -->
+
+         {% if messages %}
+                    {% for message in messages %}
+                        {% if 'top_search' in message.tags %}
+                        <div class="alert alert-info auto-hide-message">
+                            {{ message }}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% endif %}
+
         <div class="row align-items-center py-3 px-xl-5">
+           
             <div class="col-lg-3 d-none d-lg-block">
                 <a href="" class="text-decoration-none">
                     <h1 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
                 </a>
             </div>
             <div class="col-lg-6 col-6 text-left">
-                <form action="">
+                <form action="{% url 'search' %}" method="post">
+                    {% csrf_token %}
+                     <input type="hidden" name="source" value="top_search">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search for products">
+                       <input type="text" class="form-control" placeholder="Search by name" name="search">   
                         <div class="input-group-append">
-                            <span class="input-group-text bg-transparent text-primary">
-                                <i class="fa fa-search"></i>
-                            </span>
+                                        <span>
+                                            <button type="submit" class="input-group-text bg-transparent text-primary" style="padding:10px;"><i class="fa fa-search"></i></button>
+                                        </span>
                         </div>
                     </div>
                 </form>
@@ -426,22 +447,69 @@
 
     <!-- Subscribe Start -->
     <div class="container-fluid bg-secondary my-5">
+         
         <div class="row justify-content-md-center py-5 px-xl-5">
             <div class="col-md-6 col-12 py-5">
+                
                 <div class="text-center mb-2 pb-2">
                     <h2 class="section-title px-5 mb-3"><span class="bg-secondary px-2">Stay Updated</span></h2>
                     <p>Subscribe to get the latest updates, new products, and special offers.</p>
                 </div>
-                <form action="">
+                {% if subscriber %}
+                <form action="{% url 'unsubscribe' %}" method="post">
+                    {% csrf_token %}
                     <div class="input-group">
-                        <input type="text" class="form-control border-white p-4" placeholder="Enter your email">
+                        <input type="hidden" name="source" value="middle_subscribe">
+                        <input type="hidden" name="name" value="{{user_name.full_name}}">
+                        <input type="text" class="form-control border-white p-4" placeholder="Enter your email" name="email" value="{{user_name.email_id}}" readonly>
                         <div class="input-group-append">
-                            <button class="btn btn-primary px-4">Subscribe</button>
+                            <button class="btn btn-primary px-4" type="submit">Unsubscribe</button>
                         </div>
                     </div>
                 </form>
+                {% else %}
+                <form action="{% url 'subscribe' %}" method="post">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <input type="hidden" name="source" value="middle_subscribe">
+
+                        <input type="hidden" name="name" value="{{user_name.full_name}}">
+                        <input type="text" class="form-control border-white p-4" placeholder="Enter your email" name="email" value="{{user_name.email_id}}" readonly>
+                        <div class="input-group-append">
+                            <button class="btn btn-primary px-4" type="submit">Subscribe</button>
+                        </div>
+                    </div>
+                </form>
+                {% endif %}
+                <br>
+                <!-- {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert 
+                        {% if message.tags == 'success' %}alert-success
+                        {% elif message.tags == 'error' %}alert-danger
+                        {% endif %}
+                        auto-hide-message">
+                        {{ message }}
+                        </div>
+                    {% endfor %}
+                    {% endif %} -->
+                                        {% if messages %}
+  {% for message in messages %}
+    {% if 'middle_subscribe' in message.tags %}
+      <div class="alert 
+        {% if 'success' in message.tags %}alert-success
+        {% elif 'error' in message.tags %}alert-danger
+        {% endif %}
+        auto-hide-message">
+        {{ message }}
+      </div>
+    {% endif %}
+  {% endfor %}
+{% endif %}
             </div>
+            
         </div>
+       
     </div>
     <!-- Subscribe End -->
 
@@ -602,6 +670,18 @@
 
     <!-- Vendor End -->
 
+                        <script>
+                        setTimeout(function () {
+                            const alerts = document.querySelectorAll('.auto-hide-message');
+                            alerts.forEach(function(alert) {
+                            alert.style.opacity = '0';
+                            setTimeout(() => alert.remove(), 500);
+                            });
+                        }, 3000);
+                        </script>
+
+
+
 {% endblock %}
     <!-- Footer Start -->
     <div class="container-fluid bg-secondary text-dark mt-5 pt-5">
@@ -641,20 +721,80 @@
                     </div>
                     <div class="col-md-4 mb-5">
                         <h5 class="font-weight-bold text-dark mb-4">Newsletter</h5>
-                        <form action="">
+                        {% if subscriber %}
+                        <form action="{% url 'unsubscribe' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="source" value="footer_subscribe">
                             <div class="form-group">
-                                <input type="text" class="form-control border-0 py-4" placeholder="Your Name" required="required" />
+                                <input type="text" class="form-control border-0 py-4" placeholder="Your Name" value="{{user_name.full_name}}" name="name" readonly />
                             </div>
                             <div class="form-group">
-                                <input type="email" class="form-control border-0 py-4" placeholder="Your Email"
-                                    required="required" />
+                                <input type="email" class="form-control border-0 py-4" placeholder="Your Email" value="{{user_name.email_id}}" name="email"
+                                   readonly />
+                            </div>
+                            <div>
+                                <button class="btn btn-primary btn-block border-0 py-3" type="submit">Unsubscribe</button>
+                            </div>
+                        </form>
+                        {% else %}
+                        <form action="{% url 'subscribe' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="source" value="footer_subscribe">
+
+                            <div class="form-group">
+                                <input type="text" class="form-control border-0 py-4" placeholder="Your Name" value="{{user_name.full_name}}" name="name" required />
+                            </div>
+                            <div class="form-group">
+                                <input type="email" class="form-control border-0 py-4" placeholder="Your Email" value="{{user_name.email_id}}" name="email"
+                                   readonly />
                             </div>
                             <div>
                                 <button class="btn btn-primary btn-block border-0 py-3" type="submit">Subscribe Now</button>
                             </div>
                         </form>
+                      {% endif %}
+                       
+                   
                     </div>
                 </div>
+                 <!-- {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert 
+                        {% if message.tags == 'success' %}alert-success
+                        {% elif message.tags == 'error' %}alert-danger
+                        {% endif %}
+                        auto-hide-message">
+                        {{ message }}
+                        </div>
+                    {% endfor %}
+                    {% endif %} -->
+
+                    {% if messages %}
+                    {% for message in messages %}
+                        {% if 'footer_subscribe' in message.tags %}
+                        <div class="alert 
+                            {% if 'success' in message.tags %}alert-success
+                            {% elif 'error' in message.tags %}alert-danger
+                            {% endif %}
+                            auto-hide-message">
+                            {{ message }}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% endif %}
+
+                    <script>
+                        setTimeout(function () {
+                            const alerts = document.querySelectorAll('.auto-hide-message');
+                            alerts.forEach(function(alert) {
+                            alert.style.opacity = '0';
+                            setTimeout(() => alert.remove(), 500);
+                            });
+                        }, 3000);
+                        </script>
+
+
+                    
             </div>
         </div>
         <div class="row border-top border-light mx-xl-5 py-4">

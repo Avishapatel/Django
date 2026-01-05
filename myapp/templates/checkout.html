@@ -378,6 +378,9 @@
                         </div>
                     </div>
                 </div>
+                <form action="{% url 'place_order' %}" method="post">
+                {% csrf_token %}
+               
                 <div class="card border-secondary mb-5">
                     <div class="card-header bg-secondary border-0">
                         <h4 class="font-weight-semi-bold m-0">Payment</h4>
@@ -408,10 +411,12 @@
                             </div>
                         </div>
                     </div>
+                    <input type="hidden" name="bill_amount" value="{{final_total_amount}}">
                     <div class="card-footer border-secondary bg-transparent">
-                        <button class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3">Place Order</button>
+                        <button class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3" type="submit">Place Order</button>
                     </div>
                 </div>
+                 </form>
             </div>
         </div>
     </div>
@@ -456,20 +461,67 @@
                     </div>
                     <div class="col-md-4 mb-5">
                         <h5 class="font-weight-bold text-dark mb-4">Newsletter</h5>
-                        <form action="">
+                         {% if subscriber %}
+                        <form action="{% url 'unsubscribe' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="source" value="footer_subscribe">
                             <div class="form-group">
-                                <input type="text" class="form-control border-0 py-4" placeholder="Your Name" required="required" />
+                                <input type="text" class="form-control border-0 py-4" placeholder="Your Name" value="{{user_name.full_name}}" name="name" readonly />
                             </div>
                             <div class="form-group">
-                                <input type="email" class="form-control border-0 py-4" placeholder="Your Email"
-                                    required="required" />
+                                <input type="email" class="form-control border-0 py-4" placeholder="Your Email" value="{{user_name.email_id}}" name="email"
+                                   readonly />
+                            </div>
+                            <div>
+                                <button class="btn btn-primary btn-block border-0 py-3" type="submit">Unsubscribe</button>
+                            </div>
+                        </form>
+                        {% else %}
+                        <form action="{% url 'subscribe' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="source" value="footer_subscribe">
+
+                            <div class="form-group">
+                                <input type="text" class="form-control border-0 py-4" placeholder="Your Name" value="{{user_name.full_name}}" name="name" required />
+                            </div>
+                            <div class="form-group">
+                                <input type="email" class="form-control border-0 py-4" placeholder="Your Email" value="{{user_name.email_id}}" name="email"
+                                   readonly />
                             </div>
                             <div>
                                 <button class="btn btn-primary btn-block border-0 py-3" type="submit">Subscribe Now</button>
                             </div>
                         </form>
+                      {% endif %}
+                       
+                   
                     </div>
                 </div>
+                
+                    {% if messages %}
+                    {% for message in messages %}
+                        {% if 'footer_subscribe' in message.tags %}
+                        <div class="alert 
+                            {% if 'success' in message.tags %}alert-success
+                            {% elif 'error' in message.tags %}alert-danger
+                            {% endif %}
+                            auto-hide-message">
+                            {{ message }}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% endif %}
+
+                    <script>
+                        setTimeout(function () {
+                            const alerts = document.querySelectorAll('.auto-hide-message');
+                            alerts.forEach(function(alert) {
+                            alert.style.opacity = '0';
+                            setTimeout(() => alert.remove(), 500);
+                            });
+                        }, 3000);
+                        </script>
+
             </div>
         </div>
         <div class="row border-top border-light mx-xl-5 py-4">

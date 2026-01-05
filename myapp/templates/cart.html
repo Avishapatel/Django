@@ -28,25 +28,6 @@
 
 <body>
 
-    <!-- {% if messages %}
-  {% for message in messages %}
-    <div class="alert 
-         {% if message.tags == 'success' %}alert-success
-         {% elif message.tags == 'error' %}alert-danger
-         {% endif %}">
-      {{ message }}
-    </div>
-  {% endfor %}
-{% endif %} -->
-
-{% if messages %}
-  {% for message in messages %}
-    <div class="alert alert-{{ message.tags }}">
-      {{ message }}
-    </div>
-  {% endfor %}
-{% endif %}
-
 
     <!-- Topbar Start -->
     <div class="container-fluid">
@@ -156,8 +137,13 @@
                                 <a href="#" class="nav-link dropdown-toggle active" data-toggle="dropdown">Pages</a>
                                 <div class="dropdown-menu rounded-0 m-0">
                                     <a href="{% url 'cart' %}" class="dropdown-item">Shopping Cart</a>
+                                    {% if coupon_benefit %}
+                                    <a href="{% url 'checkout' %}?coupon_benefit={{coupon_benefit}}&coupon_discount_amount={{coupon_discount_amount}}" class="dropdown-item">Checkout</a>
+                                    {% else %}
                                     <a href="{% url 'checkout' %}" class="dropdown-item">Checkout</a>
-                                    <a href="{% url 'wishlist' %}"class="dropdown-item">Wishlist</a>
+                                    {% endif %}
+
+                                     <a href="{% url 'wishlist' %}"class="dropdown-item">Wishlist</a>
                                 </div>
                             </div>
                             <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>
@@ -284,6 +270,18 @@
                 </table>
             </div>
             <div class="col-lg-4">
+                        {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert 
+                        {% if message.tags == 'success' %}alert-success
+                        {% elif message.tags == 'error' %}alert-danger
+                        {% endif %}
+                        auto-hide-message">
+                        {{ message }}
+                        </div>
+                    {% endfor %}
+                    {% endif %}
+                        
                 <form class="mb-5" action="{% url 'apply_coupon' %}" method="post">
                     {% csrf_token %}
                     <div class="input-group">
@@ -291,8 +289,22 @@
                         <div class="input-group-append">
                             <button type="submit" class="btn btn-primary">Apply Coupon</button>
                         </div>
+                       
                     </div>
                 </form>
+
+                
+
+                    <script>
+                        setTimeout(function () {
+                            const alerts = document.querySelectorAll('.auto-hide-message');
+                            alerts.forEach(function(alert) {
+                            alert.style.opacity = '0';
+                            setTimeout(() => alert.remove(), 500);
+                            });
+                        }, 3000);
+                        </script>
+
                 <div class="card border-secondary mb-5">
                     <div class="card-header bg-secondary border-0">
                         <h4 class="font-weight-semi-bold m-0">Cart Summary</h4>
@@ -318,10 +330,17 @@
                             <h5 class="font-weight-bold">Total</h5>
                             <h5 class="font-weight-bold"><i class="fa-solid fa-indian-rupee-sign"></i>{{final_total_amount}}</h5>
                         </div>
+                        {% if coupon_benefit %}
                         <form method="post" action="{% url 'checkout' %}?coupon_benefit={{coupon_benefit}}&coupon_discount_amount={{coupon_discount_amount}}">
                             {% csrf_token %}
                         <button class="btn btn-block btn-primary my-3 py-3" type="submit">Proceed To Checkout</button>
                         </form>
+                        {% else %}
+                        <form method="post" action="{% url 'checkout' %}">
+                            {% csrf_token %}
+                        <button class="btn btn-block btn-primary my-3 py-3" type="submit">Proceed To Checkout</button>
+                        </form>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -368,20 +387,67 @@
                     </div>
                     <div class="col-md-4 mb-5">
                         <h5 class="font-weight-bold text-dark mb-4">Newsletter</h5>
-                        <form action="">
+                         {% if subscriber %}
+                        <form action="{% url 'unsubscribe' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="source" value="footer_subscribe">
                             <div class="form-group">
-                                <input type="text" class="form-control border-0 py-4" placeholder="Your Name" required="required" />
+                                <input type="text" class="form-control border-0 py-4" placeholder="Your Name" value="{{user_name.full_name}}" name="name" readonly />
                             </div>
                             <div class="form-group">
-                                <input type="email" class="form-control border-0 py-4" placeholder="Your Email"
-                                    required="required" />
+                                <input type="email" class="form-control border-0 py-4" placeholder="Your Email" value="{{user_name.email_id}}" name="email"
+                                   readonly />
+                            </div>
+                            <div>
+                                <button class="btn btn-primary btn-block border-0 py-3" type="submit">Unsubscribe</button>
+                            </div>
+                        </form>
+                        {% else %}
+                        <form action="{% url 'subscribe' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="source" value="footer_subscribe">
+
+                            <div class="form-group">
+                                <input type="text" class="form-control border-0 py-4" placeholder="Your Name" value="{{user_name.full_name}}" name="name" required />
+                            </div>
+                            <div class="form-group">
+                                <input type="email" class="form-control border-0 py-4" placeholder="Your Email" value="{{user_name.email_id}}" name="email"
+                                   readonly />
                             </div>
                             <div>
                                 <button class="btn btn-primary btn-block border-0 py-3" type="submit">Subscribe Now</button>
                             </div>
                         </form>
+                      {% endif %}
+                       
+                   
                     </div>
                 </div>
+                
+                    {% if messages %}
+                    {% for message in messages %}
+                        {% if 'footer_subscribe' in message.tags %}
+                        <div class="alert 
+                            {% if 'success' in message.tags %}alert-success
+                            {% elif 'error' in message.tags %}alert-danger
+                            {% endif %}
+                            auto-hide-message">
+                            {{ message }}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% endif %}
+
+                    <script>
+                        setTimeout(function () {
+                            const alerts = document.querySelectorAll('.auto-hide-message');
+                            alerts.forEach(function(alert) {
+                            alert.style.opacity = '0';
+                            setTimeout(() => alert.remove(), 500);
+                            });
+                        }, 3000);
+                        </script>
+
             </div>
         </div>
         <div class="row border-top border-light mx-xl-5 py-4">
