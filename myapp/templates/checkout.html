@@ -137,6 +137,7 @@
                                     <a href="{% url 'cart' %}" class="dropdown-item">Shopping Cart</a>
                                     <a href="{% url 'checkout' %}" class="dropdown-item">Checkout</a>
                                     <a href="{% url 'wishlist' %}"class="dropdown-item">Wishlist</a>
+                                    <a href="{% url 'my_orders' %}"class="dropdown-item">My Orders</a>
                                 </div>
                             </div>
                             <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>
@@ -388,30 +389,36 @@
                     <div class="card-body">
                         <div class="form-group">
                             <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment" id="cod" checked>
+                                <input type="radio" class="custom-control-input" name="payment" value="COD" id="cod" checked>
                                 <label class="custom-control-label" for="cod">Cash on Delivery</label>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment" id="paypal">
+                                <input type="radio" class="custom-control-input" name="payment" value="Paypal" id="paypal">
                                 <label class="custom-control-label" for="paypal">Paypal</label>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment" id="directcheck">
-                                <label class="custom-control-label" for="directcheck">Direct Check</label>
+                                <input type="radio" class="custom-control-input" name="payment" value="Direct Cheque" id="directcheck">
+                                <label class="custom-control-label" for="directcheck">Direct Cheque</label>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment" id="banktransfer">
+                                <input type="radio" class="custom-control-input" name="payment" value="Bank Transfer" id="banktransfer">
                                 <label class="custom-control-label" for="banktransfer">Bank Transfer</label>
                             </div>
                         </div>
                     </div>
+                    
+                    <input type="hidden" name="discount_percentage" value="{{how_discount}}">
                     <input type="hidden" name="bill_amount" value="{{final_total_amount}}">
+                    <input type="hidden" name="sub_total" value="{{total_amount}}">
+                    <input type="hidden" name="shipping_charge" value="{{shipping_amount}}">
+                    <input type="hidden" name="discount" value="{{discount_amount}}">
+                    <input type="hidden" name="coupon_discount" value="{{coupon_discount_amount}}">
                     <div class="card-footer border-secondary bg-transparent">
                         <button class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3" type="submit">Place Order</button>
                     </div>

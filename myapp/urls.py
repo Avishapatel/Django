@@ -28,6 +28,7 @@ urlpatterns = [
     path('contact', views.contact, name='contact'),
     path('detail', views.detail, name='detail'),
     path('shop', views.shop, name='shop'),
+    path('order_details',views.order_details,name='order_details'),
     path('color_filter', views.color_filter, name="color_filter"),
     path('size_filter', views.size_filter, name="size_filter"),
     path('price_filter', views.price_filter, name="price_filter"),

@@ -126,6 +126,37 @@ def wishlist(request):
      else:
         return render(request,'login.html')  
 
+def order_success(request):
+    if 'email_id' in request.session or 'user_name' in request.session:
+        user_name=Register.objects.get(email_id=request.session['email_id'])
+        order = Order.objects.filter(user=user_name).latest('order_date')
+        c_id=Main_category.objects.all()
+        cart_id=Cart.objects.filter(user=user_name)
+        contaxt={'c_id':c_id,'cart_id':cart_id,'user_name':user_name,'order': order,'wishlist_id':Wishlist.objects.filter(user=user_name),
+                 'user_name':user_name,'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()}
+        return render(request, 'order_success.html',contaxt)
+    else:
+        return render(request,'login.html')
+    
+    
+
+
+def my_orders(request):
+    if 'email_id' in request.session or 'user_name' in request.session:
+        user_name=Register.objects.get(email_id=request.session['email_id'])
+        orders = Order.objects.filter(user=user_name).order_by('-order_date')
+        c_id=Main_category.objects.all()
+        cart_id=Cart.objects.filter(user=user_name)
+        contaxt={'c_id':c_id,'cart_id':cart_id,'user_name':user_name,'orders': orders,'wishlist_id':Wishlist.objects.filter(user=user_name),
+                 'user_name':user_name,'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()}
+        return render(request, 'my_orders.html',contaxt)
+    else:
+        return render(request,'login.html')
+    
+   
+    
+
+
 def checkout(request):
      if 'email_id' in request.session or 'user_name' in request.session:
         user_name=Register.objects.get(email_id=request.session['email_id'])
@@ -189,10 +220,21 @@ def checkout(request):
                     break
         
         if coupon_benefit:
-            final_total_amount=(total_amount+shipping_amount)-(int(discount_amount)+int(coupon_discount_amount))
+            # final_total_amount=(total_amount+shipping_amount)-(int(discount_amount)+int(coupon_discount_amount))
+            final_total_amount = (
+                                Decimal(str(total_amount))
+                                + Decimal(str(shipping_amount))
+                                - (Decimal(str(discount_amount)) + Decimal(str(coupon_discount_amount)))
+                            ).quantize(Decimal('0.00'))
         else:
-            final_total_amount=(total_amount + shipping_amount)- discount_amount
-       
+            # final_total_amount=Decimal((total_amount + shipping_amount)- discount_amount)
+            final_total_amount = (
+                                    Decimal(str(total_amount))
+                                    + Decimal(str(shipping_amount))
+                                    - Decimal(str(discount_amount))
+                                ).quantize(Decimal('0.00'))
+
+        print('final_total_amount',final_total_amount)
         contaxt={'c_id':c_id,
                      'user_name':user_name,
                      'billing_addres_id':billing_addres_id,
@@ -1244,39 +1286,39 @@ def add_billing_address(request):
         return redirect('checkout')
     return render(request, 'checkout.html')
 
-def order_success(request):
-    user = Register.objects.get(email_id=request.session['email_id'])
-    order = Order.objects.filter(user=user).latest('order_date')
-    return render(request, 'order_success.html', {'order': order})
-
-
-def my_orders(request):
-    user = Register.objects.get(email_id=request.session['email_id'])
-    orders = Order.objects.filter(user=user).order_by('-order_date')
-    return render(request, 'my_orders.html', {'orders': orders})
 
 
 def place_order(request):
     if request.POST:
         user=Register.objects.get(email_id=request.session['email_id'])
         billing_address=Billing_address.objects.get(user=user)
+        sub_total =request.POST.get('sub_total')
+        shipping_charge = request.POST.get('shipping_charge')
+        discount = request.POST.get('discount')
+        discount_percentage=request.POST.get('discount_percentage')
+        coupon_discount = request.POST.get('coupon_discount')
         bill_amount=request.POST.get('bill_amount')
         # order_status=
         payment_mode=request.POST.get('payment')
         # payment_status=
-        print("order",user,cart,billing_address,bill_amount,payment_mode)
+        print("order",user,cart,billing_address,bill_amount,payment_mode,discount_percentage)
         cart_items = Cart.objects.filter(user=user)
+        if coupon_discount in [None, '', 'None']:
+            coupon_discount = Decimal('0.00')
+        else:
+            coupon_discount = Decimal(coupon_discount)
 
         if not cart_items.exists():
             messages.error(request, "Your cart is empty")
             return redirect('cart')
-        order=Order.objects.create(user=user,billing_address=billing_address,bill_amount=bill_amount,payment_mode=payment_mode)
+        order=Order.objects.create(user=user,billing_address=billing_address,sub_total=sub_total,shipping_charge=shipping_charge,
+                                   discount=discount,discount_percentage=discount_percentage,coupon_discount=coupon_discount,bill_amount=bill_amount,payment_mode=payment_mode)
         for item in cart_items:
             OrderItem.objects.create(
                 order=order,
                 product=item.product,
                 quantity=item.quantity,
-                price=item.product.product_price
+                price=(item.product.product_price)*(item.quantity)
             )
 
         cart_items.delete()
@@ -1286,3 +1328,23 @@ def place_order(request):
         # print("Order placed successfully")
         # return redirect("checkout")
     return render(request,'checkout.html')
+
+def order_details(request):
+    if 'email_id' in request.session or 'user_name' in request.session:
+        user_name=Register.objects.get(email_id=request.session['email_id'])
+        c_id=Main_category.objects.all()
+        cart_id=Cart.objects.filter(user=user_name)
+        o_id=request.GET.get('id')
+        print("id",o_id)
+        try:
+            order = Order.objects.get(id=o_id, user=user_name)
+        except Order.DoesNotExist:
+            return HttpResponse("Order not found")
+        order_items=OrderItem.objects.filter(order=order)
+        print("order_items",order_items)
+        contaxt={'c_id':c_id,'cart_id':cart_id,'user_name':user_name,'wishlist_id':Wishlist.objects.filter(user=user_name),
+                 'user_name':user_name,'subscriber':Subscribe.objects.filter(email=user_name.email_id).first(),'order':order,'order_items':order_items}
+        return render(request,'order_details.html',contaxt)
+    else:
+        return render(request,'login.html')
+    
