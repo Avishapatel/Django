@@ -272,11 +272,7 @@
                 </form>
                 
 
-                  <script src="https://checkout.razorpay.com/v1/checkout.js" data-key="rzp_test_bilBagOBVTi4lE"
-                    data-amount={{response.amount}} data-currency={{response.currency}} data-buttontext="Pay with Razorpay"
-                    data-name="{{uid}}" data-theme.color="#F37254" data-description="" data-image=""
-                    data-prefill.name={{request.user.username}} data-prefill.email={{request.user.email}}>
-                    </script>
+                  
                     
                 <div class="collapse mb-4" id="shipping-address">
                     <h4 class="font-weight-semi-bold mb-4">Shipping Address</h4>
@@ -379,8 +375,13 @@
                         </div>
                     </div>
                 </div>
-                <form action="{% url 'place_order' %}" method="post">
+                <!-- <form action="{% url 'place_order' %}" method="post">
                 {% csrf_token %}
+                <script src="https://checkout.razorpay.com/v1/checkout.js" data-key="rzp_test_bilBagOBVTi4lE"
+                    data-amount={{response.amount}} data-currency={{response.currency}} data-buttontext="Pay with Razorpay"
+                    data-name="{{uid}}" data-theme.color="#F37254" data-description="" data-image=""
+                    data-prefill.name={{request.user.username}} data-prefill.email={{request.user.email}}>
+                    </script>
                
                 <div class="card border-secondary mb-5">
                     <div class="card-header bg-secondary border-0">
@@ -423,8 +424,118 @@
                         <button class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3" type="submit">Place Order</button>
                     </div>
                 </div>
-                 </form>
+                 </form> -->
+            
+            
+<form action="{% url 'place_order' %}" method="post" id="order-form">
+    {% csrf_token %}
+
+    <div class="card border-secondary mb-5">
+        <div class="card-header bg-secondary border-0">
+            <h4 class="font-weight-semi-bold m-0">Payment</h4>
+        </div>
+
+        <div class="card-body">
+
+            <!-- COD -->
+            <div class="custom-control custom-radio mb-2">
+                <input type="radio" class="custom-control-input" name="payment" value="COD" id="cod" checked>
+                <label class="custom-control-label" for="cod">Cash on Delivery</label>
             </div>
+
+            <!-- Razorpay -->
+            <div class="custom-control custom-radio mb-2">
+                <input type="radio" class="custom-control-input" name="payment" value="RAZORPAY" id="razorpay">
+                <label class="custom-control-label" for="razorpay">Pay with Razorpay</label>
+            </div>
+
+            <!-- Paypal -->
+            <div class="custom-control custom-radio mb-2">
+                <input type="radio" class="custom-control-input" name="payment" value="Paypal" id="paypal">
+                <label class="custom-control-label" for="paypal">Paypal</label>
+            </div>
+
+            <!-- Direct Cheque -->
+            <div class="custom-control custom-radio mb-2">
+                <input type="radio" class="custom-control-input" name="payment" value="Direct Cheque" id="directcheck">
+                <label class="custom-control-label" for="directcheck">Direct Cheque</label>
+            </div>
+
+            <!-- Bank Transfer -->
+            <div class="custom-control custom-radio mb-2">
+                <input type="radio" class="custom-control-input" name="payment" value="Bank Transfer" id="banktransfer">
+                <label class="custom-control-label" for="banktransfer">Bank Transfer</label>
+            </div>
+
+        </div>
+
+        <!-- Hidden Fields -->
+        <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
+        
+         <input type="hidden" name="discount_percentage" value="{{how_discount}}">
+                    <input type="hidden" name="bill_amount" value="{{final_total_amount}}">
+                    <input type="hidden" name="sub_total" value="{{total_amount}}">
+                    <input type="hidden" name="shipping_charge" value="{{shipping_amount}}">
+                    <input type="hidden" name="discount" value="{{discount_amount}}">
+                    <input type="hidden" name="coupon_discount" value="{{coupon_discount_amount}}">
+        <div class="card-footer border-secondary bg-transparent">
+            <button type="submit" id="place-order-btn"
+                class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3">
+                Place Order
+            </button>
+        </div>
+    </div>
+</form>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+    var options = {
+        // "key": "rzp_test_bilBagOBVTi4lE",
+        // "amount": "{{ response.amount }}",   // paise me
+        // "currency": "{{ response.currency }}",
+        // "name": "Order Payment",
+        // "description": "E-Commerce Order",
+       
+            "key": "rzp_test_bilBagOBVTi4lE",
+            "amount": "{{amount_in_paise}}", // paise me convert
+            "currency": "INR",
+            "name": "Order Payment",
+            "description": "E-Commerce Order",
+
+        "handler": function (response) {
+            document.getElementById("razorpay_payment_id").value = response.razorpay_payment_id;
+            document.getElementById("order-form").submit();
+        },
+        "prefill": {
+            "name": "{{ request.user.username }}",
+            "email": "{{ request.user.email }}"
+        },
+        "theme": {
+            "color": "#F37254"
+        }
+    };
+
+    var rzp1 = new Razorpay(options);
+</script>
+<script>
+document.getElementById("order-form").addEventListener("submit", function (e) {
+
+    let paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+
+    if (paymentMethod === "RAZORPAY") {
+        e.preventDefault();   // normal submit stop
+        rzp1.open();         // open Razorpay popup
+    }
+
+});
+</script>
+
+
+
+
+
+            
+                </div>
         </div>
     </div>
     <!-- Checkout End -->

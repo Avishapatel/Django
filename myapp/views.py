@@ -235,6 +235,7 @@ def checkout(request):
                                 ).quantize(Decimal('0.00'))
 
         print('final_total_amount',final_total_amount)
+        amount_in_paise = int(final_total_amount * 100)
         contaxt={'c_id':c_id,
                      'user_name':user_name,
                      'billing_addres_id':billing_addres_id,
@@ -246,6 +247,7 @@ def checkout(request):
                      'shipping_amount':shipping_amount,
                      'discount_amount':discount_amount,
                      "how_discount":how_discount,
+                     'amount_in_paise':amount_in_paise,
                      'final_total_amount':final_total_amount,
                      'subscriber':Subscribe.objects.filter(email=user_name.email_id).first(),
                      'first_name':first_name,'last_name':last_name,'email_id':email_id,'phone_no':phone_no,'address_l1':address_l1,
@@ -1289,45 +1291,87 @@ def add_billing_address(request):
 
 
 def place_order(request):
-    if request.POST:
-        user=Register.objects.get(email_id=request.session['email_id'])
-        billing_address=Billing_address.objects.get(user=user)
-        sub_total =request.POST.get('sub_total')
+    if request.method == "POST":
+
+        # ================= USER & BASIC DATA =================
+        user = Register.objects.get(email_id=request.session['email_id'])
+        billing_address = Billing_address.objects.get(user=user)
+
+        sub_total = request.POST.get('sub_total')
         shipping_charge = request.POST.get('shipping_charge')
         discount = request.POST.get('discount')
-        discount_percentage=request.POST.get('discount_percentage')
+        discount_percentage = request.POST.get('discount_percentage')
         coupon_discount = request.POST.get('coupon_discount')
-        bill_amount=request.POST.get('bill_amount')
-        # order_status=
-        payment_mode=request.POST.get('payment')
-        # payment_status=
-        print("order",user,cart,billing_address,bill_amount,payment_mode,discount_percentage)
+        bill_amount = request.POST.get('bill_amount')
+
+        payment_mode = request.POST.get('payment')  # COD / RAZORPAY
+        razorpay_payment_id = request.POST.get('razorpay_payment_id')
+
         cart_items = Cart.objects.filter(user=user)
+        print("hello")
+        print("order",user,cart,billing_address,bill_amount,payment_mode,discount_percentage,razorpay_payment_id)
+        # ================= VALIDATIONS =================
+        if not cart_items.exists():
+            messages.error(request, "Your cart is empty")
+            return redirect('cart')
+
         if coupon_discount in [None, '', 'None']:
             coupon_discount = Decimal('0.00')
         else:
             coupon_discount = Decimal(coupon_discount)
 
-        if not cart_items.exists():
-            messages.error(request, "Your cart is empty")
-            return redirect('cart')
-        order=Order.objects.create(user=user,billing_address=billing_address,sub_total=sub_total,shipping_charge=shipping_charge,
-                                   discount=discount,discount_percentage=discount_percentage,coupon_discount=coupon_discount,bill_amount=bill_amount,payment_mode=payment_mode)
+        # ================= PAYMENT STATUS LOGIC =================
+        if payment_mode == "COD":
+            payment_status = "PENDING"
+
+        elif payment_mode == "RAZORPAY":
+            if not razorpay_payment_id:
+                messages.error(request, "Payment failed or cancelled")
+                return redirect('checkout')
+            payment_status = "PAID"
+
+        else:
+            messages.error(request, "Invalid payment method")
+            return redirect('checkout')
+
+        # ================= CREATE ORDER =================
+        order = Order.objects.create(
+            user=user,
+            billing_address=billing_address,
+            sub_total=sub_total,
+            shipping_charge=shipping_charge,
+            discount=discount,
+            discount_percentage=discount_percentage,
+            coupon_discount=coupon_discount,
+            bill_amount=bill_amount,
+            payment_mode=payment_mode,
+            payment_status=payment_status,
+            razorpay_payment_id=razorpay_payment_id if payment_mode == "RAZORPAY" else None
+        )
+
+        # ================= ORDER ITEMS =================
         for item in cart_items:
             OrderItem.objects.create(
                 order=order,
                 product=item.product,
                 quantity=item.quantity,
-                price=(item.product.product_price)*(item.quantity)
+                price=item.product.product_price * item.quantity
             )
 
+        # ================= CLEAR CART =================
         cart_items.delete()
 
-        messages.success(request, "Order placed successfully")
+        # ================= SUCCESS MESSAGE =================
+        if payment_mode == "COD":
+            messages.success(request, "Order placed successfully (Cash on Delivery)")
+        else:
+            messages.success(request, "Payment successful via Razorpay ✅")
+
         return redirect('order_success')
-        # print("Order placed successfully")
-        # return redirect("checkout")
-    return render(request,'checkout.html')
+
+    return render(request, 'checkout.html')
+
+
 
 def order_details(request):
     if 'email_id' in request.session or 'user_name' in request.session:

@@ -125,7 +125,8 @@ class Order(models.Model):
     order_status=models.CharField(max_length=100,default='Pending',null=True,blank=True)
     payment_mode=models.CharField(max_length=100,default='COD',null=True,blank=True)
     payment_status=models.CharField(max_length=100,default='Pending',null=True,blank=True)
-
+    razorpay_payment_id = models.CharField(max_length=255, null=True, blank=True)
+    
     def save(self, *args, **kwargs):
         if not self.order_id:
             self.order_id = "ORD-" + uuid.uuid4().hex[:8].upper()
