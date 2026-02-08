@@ -1,4 +1,5 @@
 from django.shortcuts import render, HttpResponse, redirect
+from django.http import JsonResponse
 from .models import *
 from django.db.models import Count
 from django.db.models.functions import Random
@@ -1242,6 +1243,48 @@ def add_wishlist(request):
         return redirect('shop')
      else:
         return render(request,'login.html')
+
+def toggle_wishlist_ajax(request):
+    """Handle AJAX wishlist toggle without page refresh"""
+    if request.method == 'POST' and (request.session.get('email_id') or request.session.get('user_name')):
+        try:
+            user_name = Register.objects.get(email_id=request.session['email_id'])
+            product_id = request.POST.get('product_id')
+            
+            if not product_id:
+                return JsonResponse({'status': 'error', 'message': 'Product ID is required'}, status=400)
+            
+            selected_product = Product.objects.get(id=product_id)
+            wishlist_exists = Wishlist.objects.filter(user=user_name, product__id=product_id).exists()
+            
+            if wishlist_exists:
+                wishlist_item = Wishlist.objects.get(user=user_name, product__id=product_id)
+                wishlist_item.delete()
+                return JsonResponse({
+                    'status': 'success',
+                    'action': 'removed',
+                    'message': 'Removed from wishlist',
+                    'in_wishlist': False
+                })
+            else:
+                Wishlist.objects.create(
+                    product=selected_product,
+                    user=user_name,
+                )
+                return JsonResponse({
+                    'status': 'success',
+                    'action': 'added',
+                    'message': 'Added to wishlist',
+                    'in_wishlist': True
+                })
+        except Register.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'User not found'}, status=400)
+        except Product.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Product not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Unauthorized'}, status=401)
 
 def remove_wishlist(request):
     if request.method == 'POST':
