@@ -54,6 +54,7 @@ urlpatterns = [
     path("order_success", views.order_success, name="order_success"),
     path("wishlist", views.wishlist, name="wishlist"),
     path("add_wishlist", views.add_wishlist, name="add_wishlist"),
+    path("toggle_wishlist_ajax", views.toggle_wishlist_ajax, name="toggle_wishlist_ajax"),
     path("remove_wishlist", views.remove_wishlist, name="remove_wishlist"),
     path('profile',views.profile,name="profile"),
     path('update_profile',views.update_profile,name="update_profile"),
