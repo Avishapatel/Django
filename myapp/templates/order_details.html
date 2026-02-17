@@ -143,6 +143,9 @@
         <div class="bg-success" style="position:absolute; top:4px; left:0; width:100%; height:4px; border-radius:2px;"></div>
         {% elif order.order_status == 'Cancelled' %}
         <div class="bg-danger" style="position:absolute; top:4px; left:0; width:100%; height:4px; border-radius:2px;"></div>
+        {% elif order.order_status == 'Processing' %}
+        <div class="bg-secondary" style="position:absolute; top:4px; left:0; width:100%; height:4px; border-radius:2px;"></div>
+       
         {% endif %}
 
         <!-- Step icons -->

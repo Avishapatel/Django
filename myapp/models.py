@@ -122,7 +122,17 @@ class Order(models.Model):
     discount_percentage=models.IntegerField(null=True,blank=True)
     coupon_discount = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     bill_amount=models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
-    order_status=models.CharField(max_length=100,default='Pending',null=True,blank=True)
+
+#    ORDER_STATUS_CHOICES=('Database me kya save hoga', 'User ko kya dikhega(admin pannel me dropdown me jo dikhenga)')
+    ORDER_STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Processing', 'Processing'),
+        ('Shipped', 'Shipped'),
+        ('Delivered', 'Delivered'),
+        ('Cancelled', 'Cancelled'),
+    ]
+
+    order_status=models.CharField(max_length=100,choices=ORDER_STATUS_CHOICES,default='Pending',null=True,blank=True)
     payment_mode=models.CharField(max_length=100,default='COD',null=True,blank=True)
     payment_status=models.CharField(max_length=100,default='Pending',null=True,blank=True)
     razorpay_payment_id = models.CharField(max_length=255, null=True, blank=True)

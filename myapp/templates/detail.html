@@ -429,13 +429,56 @@ Designed to provide comfort, durability, and long-lasting performance.</p>
                                     
                                     <div class="media-body">
                                         <h6>{{review.register_user.full_name}}<small> - <i>{{review.date}}</i></small></h6>
-                                        <div class="text-primary mb-2">
+                                        <!-- <div class="text-primary mb-2">
                                             <i class="fas fa-star"></i>
                                             <i class="fas fa-star"></i>
                                             <i class="fas fa-star"></i>
                                             <i class="fas fa-star-half-alt"></i>
                                             <i class="far fa-star"></i>
-                                        </div>
+                                        </div> -->
+<!-- <div class="text-primary mb-2">
+    rating:{{review.rating}}
+    {% for i in "12345" %}
+    
+        {% if review.rating >= forloop.counter %}
+            hii {{review.rating}} {{forloop.counter|add:"-0.5"}} {{forloop.counter}}
+            <i class="fas fa-star"></i>
+
+        {% elif review.rating >= forloop.counter|add:"-0.5" %}
+            hello
+            <i class="fas fa-star-half-alt"></i>
+
+        {% else %}
+            <i class="far fa-star"></i>
+        {% endif %}
+    {% endfor %}
+</div> -->
+
+<div class="mb-2">
+    rating: {{ review.rating }}
+
+    {% for i in "12345" %}
+        {% if review.rating >= forloop.counter %}
+            <i class="fas fa-star text-primary"></i>
+        {% elif review.rating > forloop.counter|add:"-1" and review.rating < forloop.counter %}
+            <i class="fas fa-star-half-alt text-primary"></i>
+
+        {% else %}
+            <i class="far fa-star text-primary"></i>
+        {% endif %}
+    {% endfor %}
+</div>
+
+
+
+
+
+
+
+
+
+
+
                                         <p>{{review.review}}</p> </div>
                                 </div>
                                 {% endfor %}

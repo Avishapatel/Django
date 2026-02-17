@@ -233,7 +233,7 @@
                             </td>
 
                             <td>
-                                <span class="badge badge-info">
+                                <span class="badge badge-info rounded-pill">
                                     {{ order.payment_mode }}
                                 </span>
                             </td>
@@ -246,6 +246,8 @@
                                         badge-success
                                     {% elif order.order_status == 'Cancelled' %}
                                         badge-danger
+                                    {% elif order.order_status == 'Shipped' %}
+                                        badge-info
                                     {% else %}
                                         badge-secondary
                                     {% endif %}

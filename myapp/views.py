@@ -55,11 +55,12 @@ def cart(request):
             total_amount=0
             for i in cart_id:
                 total_amount=i.total_price + total_amount if 'total_amount' in locals() else i.total_price
-            if total_amount >=999:
-                shipping_amount=50
-            else:
+            if total_amount >1000:
                 shipping_amount=0
+            else:
+                shipping_amount=50
             final_total_amount=total_amount + shipping_amount
+            print("total_amount",total_amount)
             contaxt={'c_id':c_id,
                      'user_name':user_name,
                      'cart_id':cart_id,
@@ -77,11 +78,12 @@ def cart(request):
             total_amount=0
             for i in cart_id:
                 total_amount=i.total_price + total_amount if 'total_amount' in locals() else i.total_price
-            if total_amount >=999:
-                shipping_amount=50
-            else:
+            if total_amount >1000:
                 shipping_amount=0
+            else:
+                shipping_amount=50
             final_total_amount=total_amount + shipping_amount
+            print("total_amount",total_amount)
             contaxt={'c_id':c_id,
                     'user_name':user_name,
                     'selected_product':selected_product,
@@ -93,6 +95,7 @@ def cart(request):
                     'subscriber':Subscribe.objects.filter(email=user_name.email_id).first()
                     }
             return render(request,'cart.html',contaxt)
+        
     else:
         return render(request,'login.html')
 
@@ -189,10 +192,10 @@ def checkout(request):
         total_amount=0
         for i in cart_id:
             total_amount=i.total_price + total_amount if 'total_amount' in locals() else i.total_price
-        if total_amount >=999:
-            shipping_amount=50
-        else:
+        if total_amount >1000:
             shipping_amount=0
+        else:
+            shipping_amount=50
        
         
         discount_amount = 0
@@ -807,9 +810,12 @@ def send_message(request):
                 )
                 print("successfully")
                 messages.success(request, "Your message has been sent successfully ✅")
-            except:
+            # except:
+            #     messages.error(request, "Something went wrong. Please try again ❌")
+            #     print("error")
+            except Exception as e:
+                print("EMAIL ERROR:", e)   # 👈 ye add karo
                 messages.error(request, "Something went wrong. Please try again ❌")
-                print("error")
 
             return redirect("contact")
 
@@ -1090,10 +1096,10 @@ def apply_coupon(request):
     coupon_benefit=False
     for i in cart_id:
         total_amount=i.total_price + total_amount if 'total_amount' in locals() else i.total_price
-    if total_amount >=999:
-        shipping_amount=50
-    else:
+    if total_amount >1000:
         shipping_amount=0
+    else:
+        shipping_amount=50
     final_total_amount=total_amount + shipping_amount
     print("total",total_amount)
     if request.method == "POST":
