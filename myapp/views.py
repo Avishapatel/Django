@@ -697,16 +697,43 @@ def send_otp(request):
             print(type(user.otp))
             print("send user-otp",user.otp)
 
+            # Create professional message
+            message = f"""
+            Hello Avisha,
 
-            # Send OTP via email
+            Your password reset OTP is: {otp}
+
+            This OTP is valid for 5 minutes.
+
+            If you did not request this, please ignore this email.
+
+            Thanks,
+            E-Shopper Support Team
+            """
+
+            # Send email
             send_mail(
-                'Your OTP for Password Reset',
-                f'Your OTP is {otp}',
-                'avishapatel.pif@gmail.com',  # settings.py EMAIL_HOST_USER
-                [email_id],
+                'Password Reset OTP - E-Shopper',   # Subject
+                message,                         # Full message here
+                'avishapatel.pif@gmail.com',      # From email (must be verified)
+                [email_id],                      # To email
                 fail_silently=False,
             )
 
+
+            # # Send OTP via email
+            # send_mail(
+            #     'Your OTP for Password Reset',
+            #     f'Your OTP is {otp}',
+            #     'avishapatel.pif@gmail.com',  # settings.py EMAIL_HOST_USER
+            #     [email_id],
+            #     fail_silently=False,
+            # )
+
+            
+
+
+            print("send user-otp",user.otp)
             # request.session['reset_user'] = user.id
             return render(request,'reset_password.html',{'email_id':email_id})  # redirect to reset password page
         except user.DoesNotExist:
@@ -801,12 +828,31 @@ def send_message(request):
                 else:
                     email_subject = "New Contact Message"
 
+                # send_mail(
+                #     email_subject,
+                #     full_message,
+                #     settings.EMAIL_HOST_USER,
+                #     ['avishapatel.pif@gmail.com'],   # admin email
+                #     fail_silently=False,
+                # )
+
                 send_mail(
-                    email_subject,
-                    full_message,
-                    settings.EMAIL_HOST_USER,
-                    ['avishapatel.pif@gmail.com'],   # admin email
-                    fail_silently=False,
+                    email_subject,        # Subject line jo email ke upar dikhegi (example: "New Complaint")
+                    
+                    full_message,         # Email ka main message / body (jo user ne complaint me likha hai)
+
+                    None,                 # From email. Yaha None diya hai kyuki settings.py me
+                                        # DEFAULT_FROM_EMAIL = "avishapatel.pif@gmail.com"
+                                        # already set hai. Agar None na do to yaha direct
+                                        # "avishapatel.pif@gmail.com" bhi likh sakte ho.
+
+                    ['avishapatel.pif@gmail.com'],   # To email. Yaha admin ka email hai jaha
+                                                    # complaint ya message receive hoga.
+                                                    # Yaha ek ya multiple emails list me de sakte ho.
+
+                    fail_silently=False,  # Agar email send karte time error aaye to Django
+                                        # error show karega (debugging me helpful).
+                                        # Agar True kar doge to error show nahi hoga.
                 )
                 print("successfully")
                 messages.success(request, "Your message has been sent successfully ✅")
